@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AvitoPlayer</string>
+
+    <string name="downloaded_tracks">Downloaded</string>
+    <string name="api_tracks">Online</string>
+    <string name="track">Track</string>
+</resources>
