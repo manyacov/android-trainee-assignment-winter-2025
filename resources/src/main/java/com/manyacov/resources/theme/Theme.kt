@@ -1,4 +1,4 @@
-package com.manyacov.avitoplayer.ui.theme
+package com.manyacov.resources.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
