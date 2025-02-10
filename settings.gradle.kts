@@ -21,4 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "AvitoPlayer"
 include(":app")
- 
+include(":common")
+include(":resources")
+include(":ui_kit")
