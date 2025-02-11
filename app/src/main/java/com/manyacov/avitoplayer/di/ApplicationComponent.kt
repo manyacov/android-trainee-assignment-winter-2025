@@ -4,13 +4,20 @@ import android.app.Application
 import android.content.Context
 import com.manyacov.avitoplayer.AvitoPlayerApp
 import com.manyacov.avitoplayer.MainActivity
+import com.manyacov.avitoplayer.di.modules.RepositoryModule
+import com.manyacov.avitoplayer.di.modules.UseCasesModule
+import com.manyacov.data.di.DataModule
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = []
+    modules = [
+        DataModule::class,
+        RepositoryModule::class,
+        UseCasesModule::class,
+    ]
 )
 interface ApplicationComponent {
 
