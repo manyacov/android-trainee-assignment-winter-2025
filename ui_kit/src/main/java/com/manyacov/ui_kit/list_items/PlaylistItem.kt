@@ -48,8 +48,8 @@ fun PlaylistItem(
         )
 
         Column {
-            Text(text = trackItem.name, fontWeight = FontWeight.Bold, fontSize = LocalTextDim.current.textSize16)
-            Text(text = trackItem.authorName, fontSize = LocalTextDim.current.textSize12)
+            Text(text = trackItem.title, fontWeight = FontWeight.Bold, fontSize = LocalTextDim.current.textSize16)
+            Text(text = trackItem.artistName, fontSize = LocalTextDim.current.textSize12)
         }
     }
 }
@@ -61,8 +61,8 @@ fun PlayListItemPreview() {
         PlaylistItem(
             trackItem = TrackItem(
                 id = "",
-                name = "Monica (Demo)",
-                authorName = "Imagine Dragons"
+                title = "Monica (Demo)",
+                artistName = "Imagine Dragons"
             )
         )
     }

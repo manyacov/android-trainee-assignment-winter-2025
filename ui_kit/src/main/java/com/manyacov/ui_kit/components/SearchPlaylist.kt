@@ -43,32 +43,32 @@ fun SearchPlaylistPreview() {
     val mockTrackList = listOf(
         TrackItem(
             id = "1",
-            name = "Track One",
-            authorName = "Artist A",
+            title = "Track One",
+            artistName = "Artist A",
             imageUrl = "https://example.com/image1.jpg"
         ),
         TrackItem(
             id = "2",
-            name = "Track Two",
-            authorName = "Artist B",
+            title = "Track Two",
+            artistName = "Artist B",
             imageUrl = "https://example.com/image2.jpg"
         ),
         TrackItem(
             id = "3",
-            name = "Track Three",
-            authorName = "Artist C",
+            title = "Track Three",
+            artistName = "Artist C",
             imageUrl = "https://example.com/image3.jpg"
         ),
         TrackItem(
             id = "4",
-            name = "Track Four",
-            authorName = "Artist D",
+            title = "Track Four",
+            artistName = "Artist D",
             imageUrl = "https://example.com/image4.jpg"
         ),
         TrackItem(
             id = "5",
-            name = "Track Five",
-            authorName = "Artist E",
+            title = "Track Five",
+            artistName = "Artist E",
             imageUrl = null
         )
     )

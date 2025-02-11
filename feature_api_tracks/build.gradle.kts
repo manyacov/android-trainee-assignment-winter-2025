@@ -54,6 +54,7 @@ dependencies {
     kapt(libs.dagger.compiler)
     annotationProcessor(libs.dagger.processor)
 
+    implementation(project(":domain"))
     implementation(project(":ui_kit"))
     implementation(project(":common"))
 }
