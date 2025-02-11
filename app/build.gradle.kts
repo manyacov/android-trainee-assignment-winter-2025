@@ -69,4 +69,6 @@ dependencies {
     implementation(project(":feature_api_tracks"))
     implementation(project(":resources"))
     implementation(project(":common"))
+    implementation(project(":data"))
+    implementation(project(":domain"))
 }
