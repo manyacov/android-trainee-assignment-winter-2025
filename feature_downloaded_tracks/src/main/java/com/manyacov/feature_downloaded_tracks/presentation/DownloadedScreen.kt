@@ -1,12 +1,11 @@
 package com.manyacov.feature_downloaded_tracks.presentation
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.manyacov.resources.theme.AvitoPlayerTheme
-import details.AppSearchBar
+import com.manyacov.ui_kit.components.SearchPlaylist
 
 @Composable()
 fun DownloadedScreen(
@@ -22,12 +21,8 @@ internal fun DownloadedScreen(
     modifier: Modifier = Modifier,
 ) {
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-        //.padding(LocalDim.current.spaceSize14)
-    ) {
-        AppSearchBar()
+    Box() {
+        SearchPlaylist(trackList = listOf())
     }
 
 }

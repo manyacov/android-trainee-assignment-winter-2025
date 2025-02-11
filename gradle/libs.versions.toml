@@ -12,6 +12,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 dagger = "2.51.1"
 navigation = "2.8.6"
+coil = "3.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,9 +31,11 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+compose-coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 
 dagger = { module = "com.google.dagger:dagger-android", version.ref = "dagger" }
 dagger-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }

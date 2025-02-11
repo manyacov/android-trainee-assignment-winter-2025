@@ -10,8 +10,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.manyacov.resources.theme.color.DarkGray
-import com.manyacov.resources.theme.color.Pink40
-import com.manyacov.resources.theme.color.Pink80
 import com.manyacov.resources.theme.color.PrimaryGreen
 import com.manyacov.resources.theme.color.White
 

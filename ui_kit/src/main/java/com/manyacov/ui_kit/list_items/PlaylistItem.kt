@@ -3,24 +3,53 @@ package com.manyacov.ui_kit.list_items
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.manyacov.resources.theme.AvitoPlayerTheme
+import com.manyacov.resources.theme.LocalDim
 import com.manyacov.resources.theme.LocalTextDim
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
+import com.manyacov.resources.R
 
 @Composable
 fun PlaylistItem(
     modifier: Modifier = Modifier,
-    //audioItem: AudioItem
+    trackItem: TrackItem
 ) {
-    Row(modifier = modifier.fillMaxWidth()) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = LocalDim.current.spaceSize8),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            modifier = Modifier
+                .padding(horizontal = LocalDim.current.spaceSize4)
+                .size(LocalDim.current.spaceSize58)
+                .clip(RoundedCornerShape(LocalDim.current.spaceSize14)),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(trackItem.imageUrl)
+                .crossfade(true)
+                .build(),
+            placeholder = painterResource(id = R.drawable.ic_placeholer),
+            contentDescription = null,
+        )
 
         Column {
-            Text(text = "audioItem.name", fontWeight = FontWeight.Bold, fontSize = LocalTextDim.current.textSize16)
-            Text(text = "audioItem.authorName", fontSize = LocalTextDim.current.textSize12)
+            Text(text = trackItem.name, fontWeight = FontWeight.Bold, fontSize = LocalTextDim.current.textSize16)
+            Text(text = trackItem.authorName, fontSize = LocalTextDim.current.textSize12)
         }
     }
 }
@@ -29,6 +58,12 @@ fun PlaylistItem(
 @Composable
 fun PlayListItemPreview() {
     AvitoPlayerTheme {
-        PlaylistItem()
+        PlaylistItem(
+            trackItem = TrackItem(
+                id = "",
+                name = "Monica (Demo)",
+                authorName = "Imagine Dragons"
+            )
+        )
     }
 }
