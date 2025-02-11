@@ -20,7 +20,10 @@ import com.manyacov.avitoplayer.navigation.NavItem
 import com.manyacov.common.Constants.BOTTOM_NAV_CHANGING_DURATION
 import com.manyacov.common.Constants.SCREEN_CHANGING_DURATION
 import com.manyacov.avitoplayer.di.daggerViewModel
+import com.manyacov.feature_api_tracks.presentation.ApiPlaylistScreen
+import com.manyacov.feature_api_tracks.presentation.ApiPlaylistViewModel
 import com.manyacov.feature_downloaded_tracks.di.DaggerDownloadedScreenComponent
+import com.manyacov.feature_api_tracks.di.DaggerApiPlaylistScreenComponent
 import com.manyacov.feature_downloaded_tracks.presentation.DownloadedScreen
 import com.manyacov.feature_downloaded_tracks.presentation.DownloadedViewModel
 import kotlinx.coroutines.delay
@@ -56,7 +59,6 @@ fun Navigation() {
                 enterTransition = { fadeIn(animationSpec = tween(SCREEN_CHANGING_DURATION)) }
             ) {
                 val component = DaggerDownloadedScreenComponent.builder().build()
-
                 val viewModel: DownloadedViewModel = daggerViewModel { component.getViewModel() }
 
                 DownloadedScreen(
@@ -68,7 +70,13 @@ fun Navigation() {
                 route = NavItem.Online.path,
                 enterTransition = { fadeIn(animationSpec = tween(SCREEN_CHANGING_DURATION)) })
             {
+                val component = DaggerApiPlaylistScreenComponent.builder().build()
+                val viewModel: ApiPlaylistViewModel = daggerViewModel { component.getViewModel() }
 
+                ApiPlaylistScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    viewModel = viewModel
+                )
             }
             composable(
                 route = NavItem.Song.path,
