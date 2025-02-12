@@ -30,7 +30,11 @@ import androidx.compose.ui.Alignment
 @Composable
 fun SearchPlaylist(
     modifier: Modifier = Modifier,
-    trackList: List<TrackItem>
+    trackList: List<TrackItem>,
+    onReloadClicked: () -> Unit = {},
+    onSearchClicked: () -> Unit = {},
+    searchString: String? = null,
+    onSearchValueChange: (String) -> Unit = {},
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -43,12 +47,15 @@ fun SearchPlaylist(
         ) {
             AppSearchBar(
                 modifier = Modifier.weight(1f),
+                value = searchString,
+                onValueChange = { value -> onSearchValueChange(value) },
+                onSearchClicked = onSearchClicked
             )
 
             Icon(
                 modifier = Modifier
                     .size(LocalDim.current.spaceSize42)
-                    .clickable { },
+                    .clickable { onReloadClicked() },
                 painter = painterResource(R.drawable.ic_reload),
                 tint = MaterialTheme.colorScheme.primary,
                 contentDescription = "ic_reload_clickable",

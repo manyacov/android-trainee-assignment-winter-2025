@@ -22,19 +22,28 @@ fun ApiPlaylistScreen(
 
     ApiPlaylistScreen(
         modifier = modifier,
-        playlist = state.playlist
+        playlist = state.playlist,
+        searchString = state.searchString,
+        onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
+        onSearchValueChange = { viewModel.setEvent(ApiPlaylistContract.Event.UpdateSearchText(it)) }
     )
 }
 
 @Composable
 internal fun ApiPlaylistScreen(
     modifier: Modifier = Modifier,
-    playlist: List<TrackItem>
+    playlist: List<TrackItem>,
+    searchString: String = "",
+    onReloadClicked: () -> Unit = {},
+    onSearchValueChange: (String) -> Unit = {}
 ) {
 
     SearchPlaylist(
         modifier = modifier.statusBarsPadding().systemBarsPadding().padding(LocalDim.current.spaceSize16),
-        trackList = playlist
+        trackList = playlist,
+        onReloadClicked = onReloadClicked,
+        searchString = searchString,
+        onSearchValueChange = onSearchValueChange
     )
 }
 

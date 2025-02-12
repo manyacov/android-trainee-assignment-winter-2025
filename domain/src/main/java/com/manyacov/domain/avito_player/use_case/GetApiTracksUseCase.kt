@@ -11,7 +11,7 @@ class GetApiTracksUseCase @Inject constructor(
 
     override suspend fun execute(params: Params): List<PlaylistTrack> {
         var list: List<PlaylistTrack> = listOf()
-        playlistRepository.getChartTracks().collect { list = it }
+        playlistRepository.getChartTracks().collect { list = it.data ?: listOf() }
         return list
     }
 
