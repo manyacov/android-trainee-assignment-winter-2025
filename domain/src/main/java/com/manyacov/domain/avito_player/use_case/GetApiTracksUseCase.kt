@@ -3,8 +3,9 @@ package com.manyacov.domain.avito_player.use_case
 import com.manyacov.common.domain.BaseUseCase
 import com.manyacov.domain.avito_player.model.PlaylistTrack
 import com.manyacov.domain.avito_player.repository.PlaylistRepository
+import javax.inject.Inject
 
-class GetApiTracksUseCase(
+class GetApiTracksUseCase @Inject constructor(
     private val playlistRepository: PlaylistRepository
 ) : BaseUseCase<List<PlaylistTrack>, GetApiTracksUseCase.Params>() {
 

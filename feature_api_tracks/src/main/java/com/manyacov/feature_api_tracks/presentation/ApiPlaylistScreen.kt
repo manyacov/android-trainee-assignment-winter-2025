@@ -12,7 +12,7 @@ import com.manyacov.ui_kit.list_items.TrackItem
 @Composable()
 fun ApiPlaylistScreen(
     modifier: Modifier = Modifier,
-    //viewModel: ApiPlaylistViewModel? = null
+    viewModel: ApiPlaylistViewModel
 ) {
     val state by viewModel.uiState.collectAsState()
 
