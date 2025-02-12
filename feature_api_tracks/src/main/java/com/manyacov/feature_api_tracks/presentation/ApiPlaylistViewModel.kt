@@ -29,13 +29,23 @@ class ApiPlaylistViewModel @Inject constructor(
 
     private fun searchTracks() = viewModelScope.launch(Dispatchers.IO) {
         setState { copy(isLoading = true) }
-        val list = searchApiTracksUseCase.invoke(SearchApiTracksUseCase.Params(uiState.value.searchString))
-        setState { copy(isLoading = false, playlist = list.map { it.toTrackItem() }) }
+        if (uiState.value.searchString.isNotBlank()) {
+            val list = searchApiTracksUseCase.invoke(SearchApiTracksUseCase.Params(uiState.value.searchString))
+            setState { copy(isLoading = false, playlist = list.map { it.toTrackItem() }) }
+        } else {
+            loadTracks()
+        }
     }
 
     override fun handleEvent(event: ApiPlaylistContract.Event) {
         when (event) {
-            is ApiPlaylistContract.Event.OnReloadClicked -> loadTracks()
+            is ApiPlaylistContract.Event.OnReloadClicked -> {
+                if (uiState.value.searchString.isNotBlank()) {
+                    searchTracks()
+                } else {
+                    loadTracks()
+                }
+            }
             is ApiPlaylistContract.Event.OnSearchClicked -> searchTracks()
             is ApiPlaylistContract.Event.UpdateSearchText -> setState { copy(searchString = event.searchText) }
         }
