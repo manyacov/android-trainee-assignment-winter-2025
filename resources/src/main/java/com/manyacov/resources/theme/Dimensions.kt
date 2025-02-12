@@ -12,5 +12,8 @@ data class Dimensions(
     val spaceSize14: Dp = 14.dp,
     val spaceSize16: Dp = 16.dp,
     val spaceSize24: Dp = 24.dp,
+    val spaceSize36: Dp = 36.dp,
+    val spaceSize42: Dp = 42.dp,
+    val spaceSize48: Dp = 48.dp,
     val spaceSize58: Dp = 58.dp,
 )

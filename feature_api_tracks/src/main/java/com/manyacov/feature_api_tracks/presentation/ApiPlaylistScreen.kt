@@ -1,11 +1,15 @@
 package com.manyacov.feature_api_tracks.presentation
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.manyacov.resources.theme.AvitoPlayerTheme
+import com.manyacov.resources.theme.LocalDim
 import com.manyacov.ui_kit.components.SearchPlaylist
 import com.manyacov.ui_kit.list_items.TrackItem
 
@@ -29,7 +33,7 @@ internal fun ApiPlaylistScreen(
 ) {
 
     SearchPlaylist(
-        modifier = modifier,
+        modifier = modifier.statusBarsPadding().systemBarsPadding().padding(LocalDim.current.spaceSize16),
         trackList = playlist
     )
 }

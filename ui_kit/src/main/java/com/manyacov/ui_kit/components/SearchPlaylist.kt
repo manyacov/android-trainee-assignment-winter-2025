@@ -1,9 +1,13 @@
 package com.manyacov.ui_kit.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,9 +17,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.manyacov.resources.theme.AvitoPlayerTheme
 import com.manyacov.resources.theme.LocalDim
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.painterResource
+import com.manyacov.resources.R
 import com.manyacov.ui_kit.details.AppSearchBar
 import com.manyacov.ui_kit.list_items.PlaylistItem
 import com.manyacov.ui_kit.list_items.TrackItem
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Alignment
 
 @Composable
 fun SearchPlaylist(
@@ -23,14 +33,31 @@ fun SearchPlaylist(
     trackList: List<TrackItem>
 ) {
     Column(
-        modifier = modifier.fillMaxSize().statusBarsPadding().systemBarsPadding(),
-        verticalArrangement = Arrangement.spacedBy(LocalDim.current.spaceSize4)
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(LocalDim.current.spaceSize16)
     ) {
-        AppSearchBar()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(LocalDim.current.spaceSize16)
+        ) {
+            AppSearchBar(
+                modifier = Modifier.weight(1f),
+            )
+
+            Icon(
+                modifier = Modifier
+                    .size(LocalDim.current.spaceSize42)
+                    .clickable { },
+                painter = painterResource(R.drawable.ic_reload),
+                tint = MaterialTheme.colorScheme.primary,
+                contentDescription = "ic_reload_clickable",
+            )
+        }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(LocalDim.current.spaceSize16)
+            contentPadding = PaddingValues()
         ) {
             items(trackList) { item ->
                 PlaylistItem(trackItem = item)
@@ -76,6 +103,12 @@ fun SearchPlaylistPreview() {
     )
 
     AvitoPlayerTheme {
-        SearchPlaylist(trackList = mockTrackList)
+        SearchPlaylist(
+            modifier = Modifier
+                .statusBarsPadding()
+                .systemBarsPadding()
+                .padding(LocalDim.current.spaceSize16),
+            trackList = mockTrackList
+        )
     }
 }

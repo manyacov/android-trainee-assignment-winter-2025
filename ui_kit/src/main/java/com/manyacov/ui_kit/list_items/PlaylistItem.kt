@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import com.manyacov.resources.R
 
 @Composable
@@ -48,8 +49,19 @@ fun PlaylistItem(
         )
 
         Column {
-            Text(text = trackItem.title, fontWeight = FontWeight.Bold, fontSize = LocalTextDim.current.textSize16)
-            Text(text = trackItem.artistName, fontSize = LocalTextDim.current.textSize12)
+            Text(
+                text = trackItem.title,
+                fontWeight = FontWeight.Bold,
+                fontSize = LocalTextDim.current.textSize16,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = trackItem.artistName,
+                fontSize = LocalTextDim.current.textSize12,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

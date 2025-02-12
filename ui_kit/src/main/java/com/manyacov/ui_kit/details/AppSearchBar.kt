@@ -1,6 +1,5 @@
 package com.manyacov.ui_kit.details
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
@@ -41,7 +40,7 @@ fun AppSearchBar(
     val trackName by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         shape = RoundedCornerShape(LocalDim.current.spaceSize14),
         colors = setColorScheme(),
 
