@@ -21,4 +21,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "AvitoPlayer"
 include(":app")
- 
+include(":common")
+include(":resources")
+include(":ui_kit")
+include(":feature_downloaded_tracks")
+include(":feature_api_tracks")
+include(":data")
+include(":domain")
