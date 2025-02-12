@@ -1,8 +1,6 @@
 package com.manyacov.feature_api_tracks.presentation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,7 +39,7 @@ internal fun ApiPlaylistScreen(
 ) {
 
     SearchPlaylist(
-        modifier = modifier.statusBarsPadding().systemBarsPadding().padding(LocalDim.current.spaceSize16),
+        modifier = modifier.padding(LocalDim.current.spaceSize16),
         trackList = playlist,
         onReloadClicked = onReloadClicked,
         onSearchClicked = onSearchClicked,

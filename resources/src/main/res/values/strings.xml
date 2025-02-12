@@ -4,4 +4,5 @@
     <string name="downloaded_tracks">Downloaded</string>
     <string name="api_tracks">Online</string>
     <string name="track">Track</string>
+    <string name="error_rejected_permissions">Please, reload and give permissions for audio library access</string>
 </resources>
