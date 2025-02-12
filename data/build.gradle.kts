@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.retrofit.converter.kotlinx.serialization)
     implementation(libs.logging.interceptor)
     implementation(libs.converter.moshi)
+    implementation(libs.retrofit.adapter)
 
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)

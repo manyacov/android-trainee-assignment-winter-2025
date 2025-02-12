@@ -11,6 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
+import com.skydoves.retrofit.adapters.result.ResultCallAdapterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -43,6 +44,7 @@ object DataModule {
             .baseUrl(BuildConfig.DEEZER_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create())
+            .addCallAdapterFactory(ResultCallAdapterFactory.create())
             .build()
     }
 

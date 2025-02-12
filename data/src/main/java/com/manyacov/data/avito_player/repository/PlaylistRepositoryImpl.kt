@@ -2,27 +2,25 @@ package com.manyacov.data.avito_player.repository
 
 import com.manyacov.data.avito_player.datasource.remote.api.PlaylistApi
 import com.manyacov.data.avito_player.mapper.toPlaylistTrack
+import com.manyacov.data.avito_player.utils.toRequestResult
 import com.manyacov.domain.avito_player.model.PlaylistTrack
 import com.manyacov.domain.avito_player.repository.PlaylistRepository
-import kotlinx.coroutines.Dispatchers
+import com.manyacov.domain.avito_player.utils.CustomResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PlaylistRepositoryImpl @Inject constructor(
-    private val api: PlaylistApi
+    private val playlistApi: PlaylistApi
 ): PlaylistRepository {
 
-    override suspend fun getChartTracks(): Flow<List<PlaylistTrack>> = withContext(Dispatchers.IO) {
-        val result = api.getChartList()
+    override suspend fun getChartTracks(): Flow<CustomResult<List<PlaylistTrack>>> {
+        val apiResult = playlistApi.getChartList()
 
-        val list = if (result.isSuccessful) {
-            result.body()?.tracks?.data?.map { it.toPlaylistTrack() } ?: listOf()
-        } else {
-            listOf()
+        val result = apiResult.toRequestResult { data ->
+            data.tracks.data.map { it.toPlaylistTrack() }
         }
-        flow { emit(list) }
-    }
 
+        return flow { emit(result) }
+    }
 }
