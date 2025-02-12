@@ -1,6 +1,5 @@
 package com.manyacov.feature_api_tracks.presentation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,7 +12,7 @@ import com.manyacov.ui_kit.list_items.TrackItem
 @Composable()
 fun ApiPlaylistScreen(
     modifier: Modifier = Modifier,
-    viewModel: ApiPlaylistViewModel
+    //viewModel: ApiPlaylistViewModel? = null
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -29,12 +28,10 @@ internal fun ApiPlaylistScreen(
     playlist: List<TrackItem>
 ) {
 
-    Box() {
-        SearchPlaylist(
-            trackList = playlist
-        )
-    }
-
+    SearchPlaylist(
+        modifier = modifier,
+        trackList = playlist
+    )
 }
 
 @Preview

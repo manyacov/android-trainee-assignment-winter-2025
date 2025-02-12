@@ -38,10 +38,6 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.dagger)
-    kapt(libs.dagger.compiler)
-    annotationProcessor(libs.dagger.processor)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

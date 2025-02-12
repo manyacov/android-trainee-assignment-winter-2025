@@ -4,14 +4,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.manyacov.resources.theme.AvitoPlayerTheme
 import com.manyacov.resources.theme.LocalDim
-import details.AppSearchBar
 import androidx.compose.foundation.lazy.items
+import com.manyacov.ui_kit.details.AppSearchBar
 import com.manyacov.ui_kit.list_items.PlaylistItem
 import com.manyacov.ui_kit.list_items.TrackItem
 
@@ -21,7 +23,7 @@ fun SearchPlaylist(
     trackList: List<TrackItem>
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().statusBarsPadding().systemBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(LocalDim.current.spaceSize4)
     ) {
         AppSearchBar()

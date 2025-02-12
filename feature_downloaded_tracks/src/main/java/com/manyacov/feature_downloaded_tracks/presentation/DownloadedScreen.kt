@@ -1,6 +1,7 @@
 package com.manyacov.feature_downloaded_tracks.presentation
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -10,21 +11,20 @@ import com.manyacov.ui_kit.components.SearchPlaylist
 @Composable()
 fun DownloadedScreen(
     modifier: Modifier = Modifier,
-    viewModel: DownloadedViewModel
+    viewModel: DownloadedViewModel? = null
 ) {
 
-    DownloadedScreen(modifier = modifier)
+    DownloadedScreen(modifier = Modifier.statusBarsPadding().systemBarsPadding())
 }
 
 @Composable
 internal fun DownloadedScreen(
     modifier: Modifier = Modifier,
 ) {
-
-    Box() {
-        SearchPlaylist(trackList = listOf())
-    }
-
+    SearchPlaylist(
+        modifier = modifier,
+        trackList = listOf()
+    )
 }
 
 @Preview

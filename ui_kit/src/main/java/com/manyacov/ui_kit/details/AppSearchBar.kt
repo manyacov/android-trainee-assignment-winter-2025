@@ -1,4 +1,4 @@
-package details
+package com.manyacov.ui_kit.details
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

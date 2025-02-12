@@ -52,7 +52,5 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.converter.moshi)
 
-    implementation(libs.dagger)
-
     implementation(project(":domain"))
 }

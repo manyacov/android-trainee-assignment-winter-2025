@@ -12,15 +12,6 @@ class ApiPlaylistViewModel @Inject constructor(
     private val getApiTracksUseCase: GetApiTracksUseCase
 ): BaseViewModel<ApiPlaylistContract.Event, ApiPlaylistContract.State, ApiPlaylistContract.Effect>() {
 
-//    private val searchText = MutableStateFlow("")
-//    private val tracks = combine(
-//        searchText.debounce(Constants.SEARCH_DEBOUNCE_MILLS),
-//        searchFilter
-//    ) { searchText, searchFilter ->
-//        searchText to searchFilter
-//    }.flatMapLatest { (searchText, searchFilter) ->
-//        flow { emit(musicManager.searchSongs(searchText, searchFilter).cachedIn(viewModelScope)) }
-//    }
 
     override fun createInitialState() = ApiPlaylistContract.State()
 

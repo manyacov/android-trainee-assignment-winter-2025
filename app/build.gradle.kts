@@ -61,10 +61,6 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.dagger)
-    kapt(libs.dagger.compiler)
-    annotationProcessor(libs.dagger.processor)
-
     implementation(project(":feature_downloaded_tracks"))
     implementation(project(":feature_api_tracks"))
     implementation(project(":resources"))
