@@ -7,5 +7,5 @@ fun PlaylistTrack.toTrackItem() = TrackItem(
     id = this.id.toString(),
     title = this.title,
     artistName = this.artistName,
-    imageUrl = this.preview
+    imageUrl = this.cover
 )

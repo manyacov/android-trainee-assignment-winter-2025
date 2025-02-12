@@ -5,5 +5,5 @@ data class PlaylistTrack(
     val title: String,
     val artistName: String,
     val albumTitle: String,
-    val preview: String
+    val cover: String
 )

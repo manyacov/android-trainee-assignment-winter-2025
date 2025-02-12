@@ -56,6 +56,7 @@ fun PlaylistItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+            
             Text(
                 text = trackItem.artistName,
                 fontSize = LocalTextDim.current.textSize12,
@@ -74,7 +75,8 @@ fun PlayListItemPreview() {
             trackItem = TrackItem(
                 id = "",
                 title = "Monica (Demo)",
-                artistName = "Imagine Dragons"
+                artistName = "Imagine Dragons",
+                imageUrl = "https://api.deezer.com/album/1347315/image"
             )
         )
     }
