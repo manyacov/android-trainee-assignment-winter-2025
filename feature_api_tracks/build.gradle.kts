@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
 
+    implementation(libs.paging)
+    implementation(libs.paging.compose)
+
     implementation(project(":domain"))
     implementation(project(":ui_kit"))
     implementation(project(":common"))
