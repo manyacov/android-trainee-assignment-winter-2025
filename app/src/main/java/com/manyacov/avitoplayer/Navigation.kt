@@ -4,8 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,7 +59,7 @@ fun Navigation() {
                 val viewModel = hiltViewModel<DownloadedViewModel>()
 
                 DownloadedScreen(
-                    modifier = Modifier.statusBarsPadding().systemBarsPadding(),
+                    modifier = Modifier.padding(innerPadding),
                     viewModel = viewModel
                 )
             }
@@ -72,7 +70,7 @@ fun Navigation() {
                 val viewModel = hiltViewModel<ApiPlaylistViewModel>()
 
                 ApiPlaylistScreen(
-                    modifier = Modifier.statusBarsPadding().systemBarsPadding(),
+                    modifier = Modifier.padding(innerPadding),
                     viewModel = viewModel
                 )
             }

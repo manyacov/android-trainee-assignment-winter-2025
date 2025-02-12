@@ -3,8 +3,6 @@ package com.manyacov.feature_downloaded_tracks.presentation
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,8 +19,7 @@ import com.manyacov.ui_kit.list_items.TrackItem
 import android.Manifest
 import android.os.Build
 
-
-@Composable()
+@Composable
 fun DownloadedScreen(
     modifier: Modifier = Modifier,
     viewModel: DownloadedViewModel
@@ -83,10 +80,7 @@ internal fun DownloadedScreen(
     onSearchValueChange: (String) -> Unit = {}
 ) {
     SearchPlaylist(
-        modifier = modifier
-            .statusBarsPadding()
-            .systemBarsPadding()
-            .padding(LocalDim.current.spaceSize16),
+        modifier = modifier.padding(LocalDim.current.spaceSize16),
         trackList = playlist,
         onReloadClicked = onReloadClicked,
         onSearchClicked = onSearchClicked,
