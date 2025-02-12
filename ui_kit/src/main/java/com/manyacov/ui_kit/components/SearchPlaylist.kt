@@ -35,6 +35,7 @@ fun SearchPlaylist(
     onSearchClicked: () -> Unit = {},
     searchString: String? = null,
     onSearchValueChange: (String) -> Unit = {},
+    isError: Boolean = false
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -62,12 +63,16 @@ fun SearchPlaylist(
             )
         }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues()
-        ) {
-            items(trackList) { item ->
-                PlaylistItem(trackItem = item)
+        if (isError) {
+            TextInfoView(Modifier.fillMaxSize())
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues()
+            ) {
+                items(trackList) { item ->
+                    PlaylistItem(trackItem = item)
+                }
             }
         }
     }
