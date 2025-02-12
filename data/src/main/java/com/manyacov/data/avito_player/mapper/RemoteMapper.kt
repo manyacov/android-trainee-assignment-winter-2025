@@ -4,7 +4,7 @@ import com.manyacov.data.avito_player.datasource.remote.model.TrackDto
 import com.manyacov.domain.avito_player.model.PlaylistTrack
 
 internal fun TrackDto.toPlaylistTrack() = PlaylistTrack(
-    id = this.id,
+    id = this.id.toLong(),
     title = this.title,
     artistName = this.artist.name,
     albumTitle = this.album.title,

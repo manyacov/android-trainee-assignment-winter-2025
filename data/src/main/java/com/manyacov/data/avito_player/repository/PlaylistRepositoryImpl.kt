@@ -18,7 +18,7 @@ class PlaylistRepositoryImpl @Inject constructor(
         val result = api.getChartList()
 
         val list = if (result.isSuccessful) {
-            result.body()?.map { it.toPlaylistTrack() } ?: listOf()
+            result.body()?.tracks?.data?.map { it.toPlaylistTrack() } ?: listOf()
         } else {
             listOf()
         }
