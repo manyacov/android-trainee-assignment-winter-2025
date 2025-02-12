@@ -23,4 +23,14 @@ class PlaylistRepositoryImpl @Inject constructor(
 
         return flow { emit(result) }
     }
+
+    override suspend fun searchTracks(search: String): Flow<CustomResult<List<PlaylistTrack>>> {
+        val apiResult = playlistApi.getSearchedList(search)
+
+        val result = apiResult.toRequestResult { data ->
+            data.tracks.data.map { it.toPlaylistTrack() }
+        }
+
+        return flow { emit(result) }
+    }
 }

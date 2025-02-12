@@ -2,7 +2,6 @@ package com.manyacov.ui_kit.details
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -33,8 +32,7 @@ fun AppSearchBar(
     label: String = "",
     value: String? = null,
     onValueChange: (String) -> Unit = {},
-    searchTrack: (String) -> Unit = {},
-    onNextFocus: KeyboardActionScope.() -> Unit = {},
+    onSearchClicked: () -> Unit = {},
     setColorScheme: @Composable () -> TextFieldColors = { setOutlinedTextFieldColors() }
 ) {
     val trackName by rememberSaveable { mutableStateOf("") }
@@ -48,7 +46,7 @@ fun AppSearchBar(
             imeAction = ImeAction.Search
         ),
         keyboardActions = KeyboardActions(
-            onNext = onNextFocus
+            onSearch = { onSearchClicked() }
         ),
 
         placeholder = {
@@ -65,7 +63,7 @@ fun AppSearchBar(
         ),
 
         trailingIcon = {
-            IconButton(onClick = { searchTrack(trackName) }) {
+            IconButton(onClick = { onSearchClicked() }) {
                 Icon(
                     modifier = Modifier.padding(vertical = LocalDim.current.spaceSize4),
                     painter = painterResource(id = R.drawable.ic_search),

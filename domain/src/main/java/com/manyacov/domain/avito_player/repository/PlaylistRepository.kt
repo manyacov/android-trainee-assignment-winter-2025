@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface PlaylistRepository {
 
     suspend fun getChartTracks(): Flow<CustomResult<List<PlaylistTrack>>>
+
+    suspend fun searchTracks(search: String): Flow<CustomResult<List<PlaylistTrack>>>
 }

@@ -2,6 +2,7 @@ package com.manyacov.feature_api_tracks.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.manyacov.common.presentation.BaseViewModel
+import com.manyacov.domain.avito_player.use_case.SearchApiTracksUseCase
 import com.manyacov.domain.avito_player.use_case.GetApiTracksUseCase
 import com.manyacov.feature_api_tracks.presentation.mapper.toTrackItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,14 +12,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApiPlaylistViewModel @Inject constructor(
-    private val getApiTracksUseCase: GetApiTracksUseCase
-): BaseViewModel<ApiPlaylistContract.Event, ApiPlaylistContract.State, ApiPlaylistContract.Effect>() {
-
+    private val getApiTracksUseCase: GetApiTracksUseCase,
+    private val searchApiTracksUseCase: SearchApiTracksUseCase
+) : BaseViewModel<ApiPlaylistContract.Event, ApiPlaylistContract.State, ApiPlaylistContract.Effect>() {
 
     override fun createInitialState() = ApiPlaylistContract.State()
 
     init {
-       loadTracks()
+        loadTracks()
     }
 
     private fun loadTracks() = viewModelScope.launch(Dispatchers.IO) {
@@ -26,7 +27,17 @@ class ApiPlaylistViewModel @Inject constructor(
         setState { copy(isLoading = false, playlist = list.map { it.toTrackItem() }) }
     }
 
-    override fun handleEvent(event: ApiPlaylistContract.Event) {
+    private fun searchTracks() = viewModelScope.launch(Dispatchers.IO) {
+        setState { copy(isLoading = true) }
+        val list = searchApiTracksUseCase.invoke(SearchApiTracksUseCase.Params(uiState.value.searchString))
+        setState { copy(isLoading = false, playlist = list.map { it.toTrackItem() }) }
+    }
 
+    override fun handleEvent(event: ApiPlaylistContract.Event) {
+        when (event) {
+            is ApiPlaylistContract.Event.OnReloadClicked -> loadTracks()
+            is ApiPlaylistContract.Event.OnSearchClicked -> searchTracks()
+            is ApiPlaylistContract.Event.UpdateSearchText -> setState { copy(searchString = event.searchText) }
+        }
     }
 }
