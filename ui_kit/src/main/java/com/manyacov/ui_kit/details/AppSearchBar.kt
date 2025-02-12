@@ -35,8 +35,6 @@ fun AppSearchBar(
     onSearchClicked: () -> Unit = {},
     setColorScheme: @Composable () -> TextFieldColors = { setOutlinedTextFieldColors() }
 ) {
-    val trackName by rememberSaveable { mutableStateOf("") }
-
     OutlinedTextField(
         modifier = modifier,
         shape = RoundedCornerShape(LocalDim.current.spaceSize14),

@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.manyacov.feature_api_tracks.presentation.mapper.toStringDescription
 import com.manyacov.resources.theme.AvitoPlayerTheme
 import com.manyacov.resources.theme.LocalDim
 import com.manyacov.ui_kit.components.SearchPlaylist
@@ -20,7 +21,9 @@ fun ApiPlaylistScreen(
 
     ApiPlaylistScreen(
         modifier = modifier,
-        playlist = state.playlist,
+        playlist = state.playlist ?: listOf(),
+        isError = state.issues != null,
+        errorDescription = state.issues?.toStringDescription().orEmpty(),
         searchString = state.searchString,
         onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
         onSearchClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnSearchClicked) },
@@ -33,6 +36,8 @@ internal fun ApiPlaylistScreen(
     modifier: Modifier = Modifier,
     playlist: List<TrackItem>,
     searchString: String = "",
+    isError: Boolean = false,
+    errorDescription: String = "",
     onReloadClicked: () -> Unit = {},
     onSearchClicked: () -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
@@ -44,7 +49,9 @@ internal fun ApiPlaylistScreen(
         onReloadClicked = onReloadClicked,
         onSearchClicked = onSearchClicked,
         searchString = searchString,
-        onSearchValueChange = onSearchValueChange
+        onSearchValueChange = onSearchValueChange,
+        isError = isError,
+        errorDescription = errorDescription
     )
 }
 

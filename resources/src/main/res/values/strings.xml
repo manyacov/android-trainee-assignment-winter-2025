@@ -5,4 +5,7 @@
     <string name="api_tracks">Online</string>
     <string name="track">Track</string>
     <string name="error_rejected_permissions">Please, reload and give permissions for audio library access</string>
+    <string name="error_empty_list">Track list is empty. Please, change request or reload</string>
+    <string name="unknown_error">Something went wrong, please try later</string>
+    <string name="error_internet">Connection is lost. Please, reconnect and reload</string>
 </resources>

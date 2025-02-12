@@ -12,13 +12,16 @@ import com.manyacov.resources.R
 import com.manyacov.resources.theme.LocalDim
 
 @Composable
-fun TextInfoView(modifier: Modifier) {
+fun TextInfoView(
+    modifier: Modifier,
+    info: String
+) {
     Box(modifier = modifier) {
         Text(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(horizontal = LocalDim.current.spaceSize36),
-            text = stringResource(R.string.error_rejected_permissions),
+            text = info,
             textAlign = TextAlign.Center
         )
     }

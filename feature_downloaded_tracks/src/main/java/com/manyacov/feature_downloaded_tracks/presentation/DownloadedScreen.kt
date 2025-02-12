@@ -18,6 +18,8 @@ import com.manyacov.ui_kit.components.SearchPlaylist
 import com.manyacov.ui_kit.list_items.TrackItem
 import android.Manifest
 import android.os.Build
+import com.manyacov.domain.avito_player.utils.UiIssues
+import com.manyacov.feature_downloaded_tracks.presentation.mapper.toStringDescription
 
 @Composable
 fun DownloadedScreen(
@@ -60,11 +62,7 @@ fun DownloadedScreen(
         },
         onSearchClicked = { viewModel.setEvent(DownloadedPlaylistContract.Event.OnSearchClicked) },
         onSearchValueChange = {
-            viewModel.setEvent(
-                DownloadedPlaylistContract.Event.UpdateSearchText(
-                    it
-                )
-            )
+            viewModel.setEvent(DownloadedPlaylistContract.Event.UpdateSearchText(it))
         }
     )
 }
@@ -86,7 +84,8 @@ internal fun DownloadedScreen(
         onSearchClicked = onSearchClicked,
         searchString = searchString,
         onSearchValueChange = onSearchValueChange,
-        isError = isPermissionRejected
+        isError = isPermissionRejected,
+        errorDescription = UiIssues.PERMISSION_REJECTED_ERROR.toStringDescription()
     )
 }
 
