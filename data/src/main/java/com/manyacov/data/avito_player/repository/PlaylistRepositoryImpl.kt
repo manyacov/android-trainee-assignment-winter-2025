@@ -25,10 +25,10 @@ class PlaylistRepositoryImpl @Inject constructor(
     }
 
     override suspend fun searchTracks(search: String): Flow<CustomResult<List<PlaylistTrack>>> {
-        val apiResult = playlistApi.getSearchedList(search)
+        val apiResult = playlistApi.getSearchedList(search, 25)
 
         val result = apiResult.toRequestResult { data ->
-            data.tracks.data.map { it.toPlaylistTrack() }
+            data.data.map { it.toPlaylistTrack() }
         }
 
         return flow { emit(result) }

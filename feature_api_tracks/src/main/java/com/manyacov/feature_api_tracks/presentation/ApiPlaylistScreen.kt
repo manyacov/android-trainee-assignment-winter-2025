@@ -25,6 +25,7 @@ fun ApiPlaylistScreen(
         playlist = state.playlist,
         searchString = state.searchString,
         onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
+        onSearchClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnSearchClicked) },
         onSearchValueChange = { viewModel.setEvent(ApiPlaylistContract.Event.UpdateSearchText(it)) }
     )
 }
@@ -35,6 +36,7 @@ internal fun ApiPlaylistScreen(
     playlist: List<TrackItem>,
     searchString: String = "",
     onReloadClicked: () -> Unit = {},
+    onSearchClicked: () -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
 ) {
 
@@ -42,6 +44,7 @@ internal fun ApiPlaylistScreen(
         modifier = modifier.statusBarsPadding().systemBarsPadding().padding(LocalDim.current.spaceSize16),
         trackList = playlist,
         onReloadClicked = onReloadClicked,
+        onSearchClicked = onSearchClicked,
         searchString = searchString,
         onSearchValueChange = onSearchValueChange
     )
