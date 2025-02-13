@@ -61,9 +61,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.dagger.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.dagger.hilt.compiler)
-
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
 
     implementation(project(":feature_downloaded_tracks"))

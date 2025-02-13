@@ -18,11 +18,13 @@ import com.manyacov.ui_kit.components.SearchPlaylist
 import com.manyacov.ui_kit.list_items.TrackItem
 import android.Manifest
 import android.os.Build
+import androidx.navigation.NavController
 
 @Composable
 fun DownloadedScreen(
     modifier: Modifier = Modifier,
-    viewModel: DownloadedViewModel
+    viewModel: DownloadedViewModel,
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -59,12 +61,12 @@ fun DownloadedScreen(
             }
         },
         onSearchClicked = { viewModel.setEvent(DownloadedPlaylistContract.Event.OnSearchClicked) },
+        onTrackClicked = { path ->
+            viewModel.setEvent(DownloadedPlaylistContract.Event.OnTrackClicked(path))
+            navController.navigate("track")
+        },
         onSearchValueChange = {
-            viewModel.setEvent(
-                DownloadedPlaylistContract.Event.UpdateSearchText(
-                    it
-                )
-            )
+            viewModel.setEvent(DownloadedPlaylistContract.Event.UpdateSearchText(it))
         }
     )
 }
@@ -77,6 +79,7 @@ internal fun DownloadedScreen(
     isPermissionRejected: Boolean,
     onReloadClicked: () -> Unit = {},
     onSearchClicked: () -> Unit = {},
+    onTrackClicked: (String) -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
 ) {
     SearchPlaylist(
@@ -84,6 +87,7 @@ internal fun DownloadedScreen(
         trackList = playlist,
         onReloadClicked = onReloadClicked,
         onSearchClicked = onSearchClicked,
+        onTrackClicked = onTrackClicked,
         searchString = searchString,
         onSearchValueChange = onSearchValueChange,
         isError = isPermissionRejected

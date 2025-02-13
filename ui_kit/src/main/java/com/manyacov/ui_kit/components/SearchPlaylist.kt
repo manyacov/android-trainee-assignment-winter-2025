@@ -34,6 +34,7 @@ fun SearchPlaylist(
     onReloadClicked: () -> Unit = {},
     onSearchClicked: () -> Unit = {},
     searchString: String? = null,
+    onTrackClicked: (String) -> Unit = {},
     onSearchValueChange: (String) -> Unit = {},
     isError: Boolean = false
 ) {
@@ -71,7 +72,10 @@ fun SearchPlaylist(
                 contentPadding = PaddingValues()
             ) {
                 items(trackList) { item ->
-                    PlaylistItem(trackItem = item)
+                    PlaylistItem(
+                        trackItem = item,
+                        onClick = { info -> onTrackClicked(info) }
+                    )
                 }
             }
         }

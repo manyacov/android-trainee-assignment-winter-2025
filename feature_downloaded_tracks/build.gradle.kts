@@ -52,7 +52,10 @@ dependencies {
 
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(project(":ui_kit"))
     implementation(project(":common"))
+    implementation(project(":domain"))
 }
