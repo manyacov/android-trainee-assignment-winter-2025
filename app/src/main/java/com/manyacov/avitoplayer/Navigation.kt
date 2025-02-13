@@ -30,7 +30,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun Navigation() {
+fun Navigation(
+    startService: () -> Unit = {}
+) {
     val navController = rememberNavController()
 
     var bottomBarState by remember { mutableStateOf(true) }
