@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.manyacov.resources.theme.color.DarkGray
 import com.manyacov.resources.theme.color.FadedGreen
+import com.manyacov.resources.theme.color.LightGray
 import com.manyacov.resources.theme.color.PrimaryGreen
 import com.manyacov.resources.theme.color.White
 
@@ -18,6 +19,7 @@ private val DarkColorScheme = darkColorScheme(
     primary = PrimaryGreen,
     secondary = DarkGray,
     tertiary = FadedGreen,
+    tertiaryContainer = LightGray,
     inverseSurface = White
 )
 
@@ -25,6 +27,8 @@ private val LightColorScheme = lightColorScheme(
     primary = PrimaryGreen,
     secondary = DarkGray,
     tertiary = FadedGreen,
+    tertiaryContainer = LightGray,
+    inverseSurface = White
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
