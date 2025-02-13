@@ -81,7 +81,14 @@ fun Navigation() {
                 route = NavItem.Song.path,
                 enterTransition = { fadeIn(animationSpec = tween(SCREEN_CHANGING_DURATION)) })
             {
+                val viewModel = hiltViewModel<AudioPlayerViewModel>()
 
+                AudioPlayerScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    viewModel = viewModel,
+                )
+
+                startService()
             }
         }
     }
