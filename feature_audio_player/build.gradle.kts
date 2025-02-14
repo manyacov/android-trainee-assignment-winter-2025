@@ -1,23 +1,21 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.kapt)
+    id("kotlin-parcelize")
 }
 
 android {
-    namespace = "com.manyacov.avitoplayer"
+    namespace = "com.manyacov.feature_audio_player"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.manyacov.avitoplayer"
         minSdk = 29
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -36,14 +34,12 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.appcompat)
 
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -51,26 +47,23 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.lifecycle.compose.viewmodel)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.navigation.compose)
 
-    implementation(project(":feature_downloaded_tracks"))
-    implementation(project(":feature_api_tracks"))
-    implementation(project(":feature_audio_player"))
+    implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
 
-    implementation(project(":resources"))
-    implementation(project(":common"))
-    implementation(project(":data"))
+    implementation(libs.compose.coil)
+
     implementation(project(":domain"))
+    implementation(project(":ui_kit"))
+    implementation(project(":common"))
 }

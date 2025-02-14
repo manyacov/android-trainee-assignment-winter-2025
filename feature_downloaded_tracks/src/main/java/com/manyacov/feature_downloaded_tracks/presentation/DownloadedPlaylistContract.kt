@@ -8,12 +8,10 @@ import com.manyacov.ui_kit.list_items.TrackItem
 class DownloadedPlaylistContract {
     sealed class Event : UiEvent {
         data object OnRejectedPermissions : Event()
-
         data object OnReloadClicked : Event()
-
         data object OnSearchClicked : Event()
         data class UpdateSearchText(val searchText: String) : Event()
-
+        data class OnTrackClicked(val filePath: String) : Event()
     }
 
     data class State(

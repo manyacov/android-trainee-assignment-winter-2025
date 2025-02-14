@@ -1,6 +1,7 @@
 package com.manyacov.ui_kit.list_items
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,11 +30,13 @@ import com.manyacov.resources.R
 @Composable
 fun PlaylistItem(
     modifier: Modifier = Modifier,
-    trackItem: TrackItem
+    trackItem: TrackItem,
+    onClick: (String) -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable { onClick(trackItem.id) }
             .padding(vertical = LocalDim.current.spaceSize8),
         verticalAlignment = Alignment.CenterVertically
     ) {
