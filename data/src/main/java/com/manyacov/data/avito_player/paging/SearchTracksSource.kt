@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import retrofit2.HttpException
 import java.io.IOException
 import com.manyacov.common.Constants
+import com.manyacov.common.Constants.PAGE_SIZE
 import com.manyacov.data.avito_player.datasource.remote.api.PlaylistApi
 import com.manyacov.data.avito_player.mapper.toPlaylistTrack
 import com.manyacov.domain.avito_player.model.PlaylistTrack
@@ -24,9 +25,10 @@ class SearchTracksSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PlaylistTrack> {
         val page = params.key ?: Constants.INITIAL_INDEX
         return try {
-            val response = playlistApi.fetchSearchedList(text, page, params.loadSize)
+            val response = playlistApi.fetchSearchedList("track:${text}", page * PAGE_SIZE, params.loadSize)
 
             if (!response.isSuccessful) return LoadResult.Error(Exception(response.message()))
+
             val participants = response.body() ?: return LoadResult.Error(Exception("No data"))
             val nextKey = if (participants.data.isEmpty()) null else page + 1
 

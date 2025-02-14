@@ -13,10 +13,7 @@ import kotlinx.coroutines.flow.emptyFlow
 class ApiPlaylistContract {
     sealed class Event : UiEvent {
         data object OnReloadClicked : Event()
-
-        data object OnSearchClicked : Event()
         data class UpdateSearchText(val searchText: String) : Event()
-
     }
 
     data class State(

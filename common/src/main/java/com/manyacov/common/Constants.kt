@@ -5,7 +5,7 @@ object Constants {
     const val BOTTOM_NAV_CHANGING_DURATION = 250L
 
     const val INITIAL_INDEX = 0
-    const val INITIAL_PAGE_SIZE = 40
+    const val INITIAL_PAGE_SIZE = 20
     const val PAGE_SIZE = 20
     const val PREFETCH_DISTANCE = 20
 
