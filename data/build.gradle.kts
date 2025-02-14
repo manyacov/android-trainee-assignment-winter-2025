@@ -57,6 +57,8 @@ dependencies {
 
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
+    
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.paging)
     implementation(libs.paging.compose)

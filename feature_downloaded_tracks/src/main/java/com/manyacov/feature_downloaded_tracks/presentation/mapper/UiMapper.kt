@@ -22,7 +22,7 @@ fun convertToTrackItem(filePath: String): TrackItem {
     retriever.release()
 
     return TrackItem(
-        id = "",
+        id = filePath,
         title = title,
         artistName = artist,
         imageUrl = albumArtUrl

@@ -22,13 +22,17 @@ import com.manyacov.common.Constants.BOTTOM_NAV_CHANGING_DURATION
 import com.manyacov.common.Constants.SCREEN_CHANGING_DURATION
 import com.manyacov.feature_api_tracks.presentation.ApiPlaylistScreen
 import com.manyacov.feature_api_tracks.presentation.ApiPlaylistViewModel
+import com.manyacov.feature_audio_player.presentation.AudioPlayerScreen
+import com.manyacov.feature_audio_player.presentation.AudioPlayerViewModel
 import com.manyacov.feature_downloaded_tracks.presentation.DownloadedScreen
 import com.manyacov.feature_downloaded_tracks.presentation.DownloadedViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun Navigation() {
+fun Navigation(
+    startService: () -> Unit = {}
+) {
     val navController = rememberNavController()
 
     var bottomBarState by remember { mutableStateOf(true) }
@@ -60,7 +64,8 @@ fun Navigation() {
 
                 DownloadedScreen(
                     modifier = Modifier.padding(innerPadding),
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navController = navController
                 )
             }
             composable(
@@ -78,7 +83,14 @@ fun Navigation() {
                 route = NavItem.Song.path,
                 enterTransition = { fadeIn(animationSpec = tween(SCREEN_CHANGING_DURATION)) })
             {
+                val viewModel = hiltViewModel<AudioPlayerViewModel>()
 
+                AudioPlayerScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    viewModel = viewModel,
+                )
+
+                startService()
             }
         }
     }
