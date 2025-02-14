@@ -55,4 +55,5 @@ dependencies {
 
     implementation(project(":ui_kit"))
     implementation(project(":common"))
+    implementation(project(":domain"))
 }
