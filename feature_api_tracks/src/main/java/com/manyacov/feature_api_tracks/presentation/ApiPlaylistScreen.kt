@@ -2,18 +2,17 @@ package com.manyacov.feature_api_tracks.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
@@ -39,7 +37,7 @@ import com.manyacov.ui_kit.components.TextInfoView
 import com.manyacov.ui_kit.details.AppSearchBar
 import com.manyacov.ui_kit.list_items.PlaylistItem
 
-@Composable()
+@Composable
 fun ApiPlaylistScreen(
     modifier: Modifier = Modifier,
     viewModel: ApiPlaylistViewModel
@@ -67,9 +65,10 @@ internal fun ApiPlaylistScreen(
     onReloadClicked: () -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
 ) {
-
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .padding(LocalDim.current.spaceSize16)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(LocalDim.current.spaceSize16)
     ) {
         Row(
@@ -101,7 +100,7 @@ internal fun ApiPlaylistScreen(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 12.dp),
+                contentPadding = PaddingValues(),
                 state = items.rememberLazyListState()
             ) {
                 items(
@@ -128,12 +127,10 @@ internal fun ApiPlaylistScreen(
 
                     items.itemCount == 0 && !items.loadState.isLoading -> {
                         item {
-                            Box(
+                            TextInfoView(
                                 modifier = Modifier.fillParentMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(stringResource(R.string.error_empty_list))
-                            }
+                                info = stringResource(R.string.error_empty_list)
+                            )
                         }
                     }
                 }
