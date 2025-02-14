@@ -44,7 +44,7 @@ class DownloadedViewModel @Inject constructor(
             }
         }
 
-        val result = audioFiles.map { convertToTrackItem(it) }
+        val result = audioFiles.mapNotNull { convertToTrackItem(it) }
 
         setState { copy(isLoading = false, playlist = result, isPermissionsRejected = false) }
     }

@@ -47,7 +47,7 @@ fun PlaylistItem(
                 .clip(RoundedCornerShape(LocalDim.current.spaceSize14))
                 .background(MaterialTheme.colorScheme.tertiary),
             model = ImageRequest.Builder(LocalContext.current)
-                .data(trackItem.imageUrl)
+                .data(trackItem.albumArtBitmap ?: trackItem.imageUrl)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(id = R.drawable.ic_placeholer),
