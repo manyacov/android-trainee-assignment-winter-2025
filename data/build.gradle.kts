@@ -58,5 +58,13 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
 
+    implementation(libs.paging)
+    implementation(libs.paging.compose)
+
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+
     implementation(project(":domain"))
+    implementation(project(":common"))
 }

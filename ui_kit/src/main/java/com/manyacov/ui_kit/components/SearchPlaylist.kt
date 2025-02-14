@@ -36,7 +36,7 @@ fun SearchPlaylist(
     searchString: String? = null,
     onSearchValueChange: (String) -> Unit = {},
     isError: Boolean = false,
-    errorDescription: String = ""
+    errorDescription: String = "",
 ) {
     Column(
         modifier = modifier.fillMaxSize(),

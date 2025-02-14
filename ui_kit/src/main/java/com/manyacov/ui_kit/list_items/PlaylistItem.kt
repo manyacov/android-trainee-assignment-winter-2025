@@ -1,6 +1,5 @@
 package com.manyacov.ui_kit.list_items
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.manyacov.resources.R
@@ -46,21 +44,13 @@ fun PlaylistItem(
                 .clip(RoundedCornerShape(LocalDim.current.spaceSize14))
                 .background(MaterialTheme.colorScheme.tertiary)
                 .padding(horizontal = LocalDim.current.spaceSize12),
-            model = trackItem.imageUrl,
-//            ImageRequest.Builder(LocalContext.current)
-//                .data(trackItem.imageUrl)
-//                .crossfade(true)
-//                .build(),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(trackItem.imageUrl)
+                .crossfade(true)
+                .build(),
             placeholder = painterResource(id = R.drawable.ic_placeholer),
             contentDescription = null,
             error = painterResource(id = R.drawable.ic_placeholer),
-            onLoading = {
-                Log.println(Log.ERROR, "AAAAA", "Load")
-            },
-            onError = { error ->
-                Log.println(Log.ERROR, "AAAAA", error.result.toString())
-                Log.println(Log.ERROR, "AAAAA", trackItem.imageUrl.toString())
-            }
         )
 
         Column(modifier = Modifier.padding(horizontal = LocalDim.current.spaceSize8)) {

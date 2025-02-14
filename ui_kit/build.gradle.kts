@@ -46,12 +46,16 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.compose.coil)
+    implementation(libs.compose.coil.network)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.paging)
+    implementation(libs.paging.compose)
 
     api(project(":resources"))
 }
