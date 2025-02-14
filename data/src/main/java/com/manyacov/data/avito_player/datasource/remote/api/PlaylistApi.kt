@@ -12,11 +12,11 @@ interface PlaylistApi {
     suspend fun getChartList(): Result<ApiPlaylistResponse>
 
     @GET("chart/0/tracks")
-    suspend fun getChartTracks(
+    suspend fun fetchChartTracks(
         //index - is offset
         @Query("index") index: Int,
         @Query("limit") limit: Int
-    ): Result<ApiPlaylistResponse>
+    ): Response<ApiSearchResponse>
 
     @GET("search")
     suspend fun getSearchedList(
