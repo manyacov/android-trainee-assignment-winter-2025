@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
@@ -40,7 +41,8 @@ import com.manyacov.ui_kit.list_items.PlaylistItem
 @Composable
 fun ApiPlaylistScreen(
     modifier: Modifier = Modifier,
-    viewModel: ApiPlaylistViewModel
+    viewModel: ApiPlaylistViewModel,
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -51,6 +53,10 @@ fun ApiPlaylistScreen(
         errorDescription = state.issues?.toStringDescription().orEmpty(),
         searchString = state.searchString,
         onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
+        onTrackClicked = { path ->
+            viewModel.setEvent(ApiPlaylistContract.Event.OnTrackClicked(path))
+            navController.navigate("track")
+        },
         onSearchValueChange = { viewModel.setEvent(ApiPlaylistContract.Event.UpdateSearchText(it)) }
     )
 }
@@ -63,6 +69,7 @@ internal fun ApiPlaylistScreen(
     isError: Boolean = false,
     errorDescription: String = "",
     onReloadClicked: () -> Unit = {},
+    onTrackClicked: (String) -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
 ) {
     Column(
@@ -110,7 +117,10 @@ internal fun ApiPlaylistScreen(
                 ) { index ->
                     val song = items[index]
                     song?.let {
-                        PlaylistItem(trackItem = song.toTrackItem())
+                        PlaylistItem(
+                            trackItem = song.toTrackItem(),
+                            onClick = { info -> onTrackClicked(info) }
+                        )
                     }
                 }
                 when {

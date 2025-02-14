@@ -84,21 +84,14 @@ internal fun AudioPlayerScreen(
                 .padding(LocalDim.current.spaceSize36)
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(LocalDim.current.spaceSize14))
-                .background(MaterialTheme.colorScheme.tertiary)
-                .padding(LocalDim.current.spaceSize48),
+                .background(MaterialTheme.colorScheme.tertiary),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(audio.imageUrl)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(id = R.drawable.ic_placeholer),
             contentDescription = null,
-            error = painterResource(id = R.drawable.ic_placeholer),
-            onLoading = {
-                Log.println(Log.ERROR, "AAAAA", "Load")
-            },
-            onError = { error ->
-                Log.println(Log.ERROR, "AAAAA", error.result.toString())
-            }
+            error = painterResource(id = R.drawable.ic_placeholer)
         )
 
         TrackInfo(

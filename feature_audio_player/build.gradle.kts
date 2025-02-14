@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.media3.session)
 
     implementation(libs.compose.coil)
+    implementation(libs.compose.coil.network)
 
     implementation(project(":domain"))
     implementation(project(":ui_kit"))

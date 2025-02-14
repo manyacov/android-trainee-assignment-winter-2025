@@ -76,7 +76,8 @@ fun Navigation(
 
                 ApiPlaylistScreen(
                     modifier = Modifier.padding(innerPadding),
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navController = navController
                 )
             }
             composable(

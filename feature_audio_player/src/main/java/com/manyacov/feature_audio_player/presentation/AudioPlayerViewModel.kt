@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.manyacov.common.presentation.BaseViewModel
+import com.manyacov.domain.avito_player.use_case.GetApiTrackUseCase
 import com.manyacov.domain.avito_player.use_case.GetSessionUseCase
 import com.manyacov.feature_audio_player.notification_service.service.AvitoAudioServiceHandler
 import com.manyacov.feature_audio_player.notification_service.service.AvitoAudioState
@@ -31,6 +32,7 @@ class AudioPlayerViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val audioServiceHandler: AvitoAudioServiceHandler,
     private val getSessionUseCase: GetSessionUseCase,
+    private val getApiTrackUseCase: GetApiTrackUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<AudioPlayerContract.Event, AudioPlayerContract.State, AudioPlayerContract.Effect>() {
 
@@ -104,29 +106,58 @@ class AudioPlayerViewModel @Inject constructor(
         super.onCleared()
     }
 
-    private fun loadLocal() = viewModelScope.launch {
+    private fun loadLocal(path: String?) = viewModelScope.launch {
+        val audio = getAudioFromPath(
+            contentResolver = context.contentResolver,
+            filePath = path.orEmpty()
+        )
 
-        getSessionUseCase.invoke(GetSessionUseCase.Params).collect { path ->
-            val audio = getAudioFromPath(
-                contentResolver = context.contentResolver,
-                filePath = path.orEmpty()
-            )
+        audio?.let {
+            audioList = listOf(audio)
+            setMediaItems()
+        }
+    }
 
-            audio?.let {
-                audioList = listOf(audio)
-                setMediaItems()
+    private fun loadTrack() = viewModelScope.launch {
+
+        getSessionUseCase.invoke(GetSessionUseCase.Params).collect { info ->
+            if (info.second == true) {
+                loadLocal(info.first)
+            } else {
+                loadApiTrack(info.first)
             }
+        }
+    }
+
+    private suspend fun loadApiTrack(id: String?) {
+        val audioDomain =
+            getApiTrackUseCase.invoke(GetApiTrackUseCase.Params(id.orEmpty())).data
+
+        val audio = audioDomain?.let {
+            Audio(
+                uri = it.uri,
+                displayName = audioDomain.displayName,
+                id = audioDomain.id,
+                artist = audioDomain.artist,
+                duration = audioDomain.duration,
+                title = audioDomain.title,
+                imageUrl = audioDomain.imageUrl,
+            )
+        }
+
+        audio?.let {
+            audioList = listOf(audio)
+            setMediaItems()
         }
     }
 
 
     override fun handleEvent(event: AudioPlayerContract.Event) {
         when (event) {
-            is AudioPlayerContract.Event.OnScreenOpened -> {
-                loadLocal()
-            }
+            is AudioPlayerContract.Event.OnScreenOpened -> loadTrack()
 
             is AudioPlayerContract.Event.OnNextClicked -> {}
+
             is AudioPlayerContract.Event.OnChangeProgress -> {
                 viewModelScope.launch {
                     audioServiceHandler.onPlayerEvents(
@@ -135,6 +166,7 @@ class AudioPlayerViewModel @Inject constructor(
                     )
                 }
             }
+
             is AudioPlayerContract.Event.OnPlayPauseClicked -> {
                 viewModelScope.launch {
                     audioServiceHandler.onPlayerEvents(PlayerEvent.PlayPause)

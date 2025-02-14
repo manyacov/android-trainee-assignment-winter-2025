@@ -2,6 +2,7 @@ package com.manyacov.data.avito_player.datasource.local
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.manyacov.domain.avito_player.services.SessionCacheService
@@ -13,6 +14,7 @@ class SessionCacheServiceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ): SessionCacheService {
     private val TRACK_PATH_KEY = stringPreferencesKey("track_path")
+    private val IS_LOCAL_KEY = booleanPreferencesKey("is_local")
 
     override suspend fun saveTrackPath(path: String) {
         dataStore.edit { preferences ->
@@ -26,9 +28,22 @@ class SessionCacheServiceImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveIsLocal(isLocal: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[IS_LOCAL_KEY] = isLocal
+        }
+    }
+
+    override fun getIsLocal(): Flow<Boolean?> {
+        return dataStore.data.map { preferences ->
+            preferences[IS_LOCAL_KEY]
+        }
+    }
+
     override suspend fun clearSession() {
         dataStore.edit { preferences ->
             preferences.remove(TRACK_PATH_KEY)
+            preferences.remove(IS_LOCAL_KEY)
         }
     }
 

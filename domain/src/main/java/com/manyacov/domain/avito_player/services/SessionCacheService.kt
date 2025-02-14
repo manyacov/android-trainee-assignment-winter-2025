@@ -7,5 +7,8 @@ interface SessionCacheService {
     suspend fun saveTrackPath(path: String)
     fun getTrackPath(): Flow<String?>
 
+    suspend fun saveIsLocal(isLocal: Boolean)
+    fun getIsLocal(): Flow<Boolean?>
+
     suspend fun clearSession()
 }

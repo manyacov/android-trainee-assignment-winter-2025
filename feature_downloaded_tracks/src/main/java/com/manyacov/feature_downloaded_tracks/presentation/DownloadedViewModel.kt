@@ -70,6 +70,6 @@ class DownloadedViewModel @Inject constructor(
     }
 
     private fun savePath(filePath: String) = viewModelScope.launch(Dispatchers.IO) {
-        saveSessionUseCase.invoke(SaveSessionUseCase.Params(filePath))
+        saveSessionUseCase.invoke(SaveSessionUseCase.Params(filePath, true))
     }
 }
