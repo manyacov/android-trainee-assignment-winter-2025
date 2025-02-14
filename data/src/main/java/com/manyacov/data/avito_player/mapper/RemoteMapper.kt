@@ -18,7 +18,7 @@ fun TrackDto.mapToDomainAudio(): AudioDomain {
         uri = Uri.parse(this.preview),
         displayName = this.title_short,
         id = this.id,
-        artist = this.artist.name,
+        artist = this.contributors.joinToString(", ") { it.name },
         duration = this.duration,
         title = this.title,
         imageUrl = this.album.cover_big

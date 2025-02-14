@@ -11,5 +11,6 @@ data class TrackDto(
     val preview: String,
     val artist: ArtistDto,
     val album: AlbumDto,
-    val type: String
+    val type: String,
+    val contributors: List<ContributorsDto>
 )
