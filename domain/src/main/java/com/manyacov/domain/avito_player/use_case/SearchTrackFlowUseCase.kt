@@ -10,7 +10,7 @@ class SearchTrackFlowUseCase @Inject constructor(
     private val songsRepository: PlaylistRepository
 ) : BaseFlowUseCase<PagingData<PlaylistTrack>, SearchTrackFlowUseCase.Params>() {
 
-    override fun execute(params: Params) = songsRepository.searchSongs(params.searchText)
+    override fun execute(params: Params) = songsRepository.searchTracks(params.searchText)
 
     data class Params(val searchText: String)
 }

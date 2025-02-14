@@ -6,11 +6,5 @@ import com.manyacov.domain.avito_player.utils.CustomResult
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistRepository {
-
-    suspend fun getChartTracks(): Flow<CustomResult<List<PlaylistTrack>>>
-
-    suspend fun searchTracks(search: String): Flow<CustomResult<List<PlaylistTrack>>>
-
-    fun searchSongs(searchText: String): Flow<PagingData<PlaylistTrack>>
-
+    fun searchTracks(searchText: String): Flow<PagingData<PlaylistTrack>>
 }
