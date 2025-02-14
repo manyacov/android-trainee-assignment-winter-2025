@@ -25,7 +25,11 @@ class SearchTracksSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PlaylistTrack> {
         val page = params.key ?: Constants.INITIAL_INDEX
         return try {
-            val response = playlistApi.fetchSearchedList("track:${text}", page * PAGE_SIZE, params.loadSize)
+            val response = if(text.isEmpty()) {
+                playlistApi.fetchChartTracks(page * PAGE_SIZE, params.loadSize)
+            } else {
+                playlistApi.fetchSearchedList("track:${text}", page * PAGE_SIZE, params.loadSize)
+            }
 
             if (!response.isSuccessful) return LoadResult.Error(Exception(response.message()))
 

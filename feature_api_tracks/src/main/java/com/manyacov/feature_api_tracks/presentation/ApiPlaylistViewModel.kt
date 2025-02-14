@@ -45,13 +45,12 @@ class ApiPlaylistViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val songs = searchText
-        .filter { it.isNotEmpty() }
         .debounce(SEARCH_DEBOUNCE_MILLS.milliseconds)
         .flatMapLatest { searchText ->
             flow { emit(searchSongs(searchText).cachedIn(viewModelScope)) }
         }
 
-    fun searchSongs(searchText: String): Flow<PagingData<PlaylistTrack>> {
+    private fun searchSongs(searchText: String): Flow<PagingData<PlaylistTrack>> {
         return searchTrackFlowUseCase.invoke(
             SearchTrackFlowUseCase.Params(searchText)
         )
@@ -103,49 +102,7 @@ class ApiPlaylistViewModel @Inject constructor(
                     loadTracks()
                 }
             }
-            is ApiPlaylistContract.Event.OnSearchClicked -> {}//searchTracks()
-            is ApiPlaylistContract.Event.UpdateSearchText -> searchText.value = event.searchText//setState { copy(searchString = event.searchText) }
+            is ApiPlaylistContract.Event.UpdateSearchText -> searchText.value = event.searchText
         }
     }
-
-
-
-
-//    private val _inputText: MutableStateFlow<String> = MutableStateFlow("") // Default query is "movies".
-//    val inputText: StateFlow<String> = _inputText // Exposed as immutable state flow for UI.
-//
-//    private val searchFilter = MutableStateFlow<String>()
-
-//    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-//    val songs = inputText
-//        .filter { it.isNotEmpty() }
-//        .debounce(SEARCH_DEBOUNCE_MILLS.milliseconds)
-//        .flatMapLatest { searchText ->
-//            flow { emit(searchSongs(searchText).cachedIn(viewModelScope)) }
-//        }
-
-
-//        .flatMapLatest { query -> // Switch to the latest search query.
-//            Pager(
-//                config = PagingConfig(
-//                    pageSize = PAGE_SIZE, // Number of items per page.
-//                    prefetchDistance = PREFETCH_DISTANCE, // Number of items to prefetch.
-//                    initialLoadSize = PAGE_SIZE, // Initial number of items to load.
-//                ),
-//                pagingSourceFactory = {
-//                    NewsDataSource(repository, query) // Create a new PagingSource for the given query.
-//                }
-//            ).flow
-//                .cachedIn(viewModelScope) // Cache the result in the ViewModel's scope.
-//        }
-
-//    private val songs = combine(
-//        searchText.debounce(Constants.SEARCH_DEBOUNCE_MILLS),
-//        searchFilter
-//    ) { searchText, searchFilter ->
-//        searchText to searchFilter
-//    }.flatMapLatest { (searchText) ->
-//        flow { emit(searchTrackFlowUseCase.invoke(SearchTrackFlowUseCase.Params(searchText)).cachedIn(viewModelScope)) }
-//    }
-
 }

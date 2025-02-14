@@ -61,7 +61,6 @@ fun ApiPlaylistScreen(
         errorDescription = state.issues?.toStringDescription().orEmpty(),
         searchString = state.searchString,
         onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
-        onSearchClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnSearchClicked) },
         onSearchValueChange = { viewModel.setEvent(ApiPlaylistContract.Event.UpdateSearchText(it)) }
     )
 }
@@ -75,7 +74,6 @@ internal fun ApiPlaylistScreen(
     isError: Boolean = false,
     errorDescription: String = "",
     onReloadClicked: () -> Unit = {},
-    onSearchClicked: () -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
 ) {
 
@@ -92,7 +90,6 @@ internal fun ApiPlaylistScreen(
                 modifier = Modifier.weight(1f),
                 value = searchString,
                 onValueChange = { value -> onSearchValueChange(value) },
-                onSearchClicked = onSearchClicked
             )
 
             Icon(
@@ -123,7 +120,7 @@ internal fun ApiPlaylistScreen(
                 ) { index ->
                     val song = items[index]
                     song?.let {
-                        PlaylistItem(trackItem = song.toTrackItem(),)
+                        PlaylistItem(trackItem = song.toTrackItem())
                     }
                 }
                 when {
@@ -152,17 +149,6 @@ internal fun ApiPlaylistScreen(
             }
         }
     }
-//    SearchPlaylist(
-//        modifier = modifier.padding(LocalDim.current.spaceSize16),
-//        trackList = playlist,
-//        onReloadClicked = onReloadClicked,
-//        onSearchClicked = onSearchClicked,
-//        searchString = searchString,
-//        onSearchValueChange = onSearchValueChange,
-//        isError = isError,
-//        errorDescription = errorDescription,
-//        songs = songs
-//    )
 }
 
 val CombinedLoadStates.isLoading: Boolean
