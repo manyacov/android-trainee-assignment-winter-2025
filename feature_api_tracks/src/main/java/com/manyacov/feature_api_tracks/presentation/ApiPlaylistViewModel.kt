@@ -48,7 +48,6 @@ class ApiPlaylistViewModel @Inject constructor(
         .filter { it.isNotEmpty() }
         .debounce(SEARCH_DEBOUNCE_MILLS.milliseconds)
         .flatMapLatest { searchText ->
-            // Возвращаем поток, который уже кэшируется
             flow { emit(searchSongs(searchText).cachedIn(viewModelScope)) }
         }
 
