@@ -95,7 +95,7 @@ internal fun ApiPlaylistScreen(
                     .clickable { onReloadClicked() },
                 painter = painterResource(R.drawable.ic_reload),
                 tint = MaterialTheme.colorScheme.primary,
-                contentDescription = "ic_reload_clickable",
+                contentDescription = null,
             )
         }
 

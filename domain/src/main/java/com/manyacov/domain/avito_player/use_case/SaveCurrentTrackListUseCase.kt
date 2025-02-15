@@ -4,9 +4,9 @@ import com.manyacov.common.domain.BaseUseCase
 import com.manyacov.domain.avito_player.repository.LocalPlaylistRepository
 import javax.inject.Inject
 
-class SaveCurrentTrackList @Inject constructor(
+class SaveCurrentTrackListUseCase @Inject constructor(
     private val localRepository: LocalPlaylistRepository
-) : BaseUseCase<Unit, SaveCurrentTrackList.Params>() {
+) : BaseUseCase<Unit, SaveCurrentTrackListUseCase.Params>() {
 
     override suspend fun execute(params: Params) {
         localRepository.saveCurrentPlaylist(params.paths)
