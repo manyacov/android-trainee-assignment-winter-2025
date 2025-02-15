@@ -1,5 +1,10 @@
 package com.manyacov.feature_audio_player.presentation
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,12 +21,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -39,6 +48,7 @@ private val audioDummy = Audio(
     "".toUri(), "", 0L, "", "", ""
 )
 
+@SuppressLint("InlinedApi")
 @Composable
 fun AudioPlayerScreen(
     modifier: Modifier,
@@ -46,8 +56,28 @@ fun AudioPlayerScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
+    val notificationPermission = Manifest.permission.POST_NOTIFICATIONS
+
+    var hasPermission by remember { mutableStateOf(false) }
+    var requestPermissions by remember { mutableStateOf(false) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasPermission = isGranted
         viewModel.setEvent(AudioPlayerContract.Event.OnScreenOpened)
+    }
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        hasPermission = ContextCompat.checkSelfPermission(context, notificationPermission) == PackageManager.PERMISSION_GRANTED
+
+        if (!hasPermission) {
+            requestPermissions = true
+            permissionLauncher.launch(notificationPermission)
+        } else {
+            viewModel.setEvent(AudioPlayerContract.Event.OnScreenOpened)
+        }
     }
 
     AudioPlayerScreen(

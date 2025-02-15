@@ -17,11 +17,16 @@ import com.manyacov.resources.theme.LocalDim
 import com.manyacov.ui_kit.components.SearchPlaylist
 import com.manyacov.ui_kit.list_items.TrackItem
 import android.Manifest
-import android.os.Build
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.util.Log
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.manyacov.domain.avito_player.utils.UiIssues
 import com.manyacov.feature_downloaded_tracks.presentation.mapper.toStringDescription
 
+@SuppressLint("InlinedApi")
 @Composable
 fun DownloadedScreen(
     modifier: Modifier = Modifier,
@@ -30,23 +35,35 @@ fun DownloadedScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    var permissionGranted by remember { mutableStateOf(false) }
+    val permissionsToCheck = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.READ_MEDIA_AUDIO
+    )
+
+    var hasPermission by remember { mutableStateOf(false) }
+    var requestPermissions by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        permissionGranted = isGranted
-
-        if (permissionGranted) {
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        hasPermission = permissions.entries.any { entry -> entry.value }
+        if (hasPermission) {
+            Log.println(Log.ERROR, "TTTTTT", "")
             viewModel.setEvent(DownloadedPlaylistContract.Event.OnReloadClicked)
-        } else {
-            viewModel.setEvent(DownloadedPlaylistContract.Event.OnRejectedPermissions)
         }
     }
 
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
-        if (!permissionGranted) {
-            permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        hasPermission = permissionsToCheck.any {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (!hasPermission) {
+            requestPermissions = true
+            permissionLauncher.launch(permissionsToCheck)
+        } else {
+            viewModel.setEvent(DownloadedPlaylistContract.Event.OnReloadClicked)
         }
     }
 
@@ -56,11 +73,7 @@ fun DownloadedScreen(
         searchString = state.searchString,
         isPermissionRejected = state.isPermissionsRejected,
         onReloadClicked = {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-            } else {
-                permissionLauncher.launch(Manifest.permission.READ_MEDIA_AUDIO)
-            }
+            permissionLauncher.launch(permissionsToCheck)
         },
         onSearchClicked = { viewModel.setEvent(DownloadedPlaylistContract.Event.OnSearchClicked) },
         onTrackClicked = { path ->
