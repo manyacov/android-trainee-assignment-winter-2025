@@ -14,6 +14,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.manyacov.common.Constants.SEARCH_DEBOUNCE_MILLS
 import com.manyacov.domain.avito_player.model.PlaylistTrack
+import com.manyacov.domain.avito_player.use_case.SaveCurrentTrackList
 import com.manyacov.domain.avito_player.use_case.SaveSessionUseCase
 import com.manyacov.domain.avito_player.use_case.SearchTrackFlowUseCase
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ApiPlaylistViewModel @Inject constructor(
     private val searchTrackFlowUseCase: SearchTrackFlowUseCase,
-    private val saveSessionUseCase: SaveSessionUseCase
+    private val saveSessionUseCase: SaveSessionUseCase,
+    private val saveCurrentTrackList: SaveCurrentTrackList,
 ) : BaseViewModel<ApiPlaylistContract.Event, ApiPlaylistContract.State, ApiPlaylistContract.Effect>() {
 
     override fun createInitialState() = ApiPlaylistContract.State()
@@ -56,11 +58,12 @@ class ApiPlaylistViewModel @Inject constructor(
         when (event) {
             is ApiPlaylistContract.Event.OnReloadClicked -> {} //TODO: change reload logic
             is ApiPlaylistContract.Event.UpdateSearchText -> searchText.value = event.searchText
-            is ApiPlaylistContract.Event.OnTrackClicked -> { savePath(event.trackId) }
+            is ApiPlaylistContract.Event.OnTrackClicked -> { savePath(event.trackId, event.tracksIds) }
         }
     }
 
-    private fun savePath(trackId: String) = viewModelScope.launch(Dispatchers.IO) {
+    private fun savePath(trackId: String, tracksIds: List<Long>) = viewModelScope.launch(Dispatchers.IO) {
         saveSessionUseCase.invoke(SaveSessionUseCase.Params(trackId, false))
+        saveCurrentTrackList.invoke(SaveCurrentTrackList.Params(tracksIds.map { it.toString() }))
     }
 }

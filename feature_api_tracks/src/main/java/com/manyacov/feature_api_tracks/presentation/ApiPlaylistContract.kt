@@ -13,7 +13,7 @@ class ApiPlaylistContract {
     sealed class Event : UiEvent {
         data object OnReloadClicked : Event()
         data class UpdateSearchText(val searchText: String) : Event()
-        data class OnTrackClicked(val trackId: String) : Event()
+        data class OnTrackClicked(val trackId: String, val tracksIds: List<Long>) : Event()
     }
 
     data class State(

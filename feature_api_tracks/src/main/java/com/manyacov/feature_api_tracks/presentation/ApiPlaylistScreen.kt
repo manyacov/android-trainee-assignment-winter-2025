@@ -53,8 +53,8 @@ fun ApiPlaylistScreen(
         errorDescription = state.issues?.toStringDescription().orEmpty(),
         searchString = state.searchString,
         onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
-        onTrackClicked = { path ->
-            viewModel.setEvent(ApiPlaylistContract.Event.OnTrackClicked(path))
+        onTrackClicked = { path, tracksIds ->
+            viewModel.setEvent(ApiPlaylistContract.Event.OnTrackClicked(path, tracksIds))
             navController.navigate("track")
         },
         onSearchValueChange = { viewModel.setEvent(ApiPlaylistContract.Event.UpdateSearchText(it)) }
@@ -69,7 +69,7 @@ internal fun ApiPlaylistScreen(
     isError: Boolean = false,
     errorDescription: String = "",
     onReloadClicked: () -> Unit = {},
-    onTrackClicked: (String) -> Unit = {},
+    onTrackClicked: (String, List<Long>) -> Unit = { _, _ -> },
     onSearchValueChange: (String) -> Unit = {}
 ) {
     Column(
@@ -119,7 +119,8 @@ internal fun ApiPlaylistScreen(
                     song?.let {
                         PlaylistItem(
                             trackItem = song.toTrackItem(),
-                            onClick = { info -> onTrackClicked(info) }
+                            onClick = { info ->
+                                onTrackClicked(info, items.itemSnapshotList.items.map { it.id }) }
                         )
                     }
                 }
