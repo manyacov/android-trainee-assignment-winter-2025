@@ -27,7 +27,7 @@ class LocalPlaylistRepositoryImpl @Inject constructor(
         val previousTracks = localSource.getPreviousTwoTracks(currentId = selectedTrackId, limit = 2)
         val nextTracks = localSource.getNextTwoTracks(currentId = selectedTrackId, limit = 2)
 
-        return previousTracks.map { it.path } + selectedTrack.path + nextTracks.map { it.path }
+        return (previousTracks.map { it.path }).reversed() + selectedTrack.path + nextTracks.map { it.path }
     }
 
     override suspend fun getPreviousTrackId(trackId: String): String? {

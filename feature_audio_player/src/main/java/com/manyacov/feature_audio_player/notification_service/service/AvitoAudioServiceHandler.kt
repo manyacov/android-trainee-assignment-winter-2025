@@ -28,14 +28,12 @@ class AvitoAudioServiceHandler @Inject constructor(
 
     fun addNextMediaItem(index: Int, mediaItem: MediaItem) {
         exoPlayer.addMediaItem(index, mediaItem)
-        exoPlayer.prepare()
+        exoPlayer.removeMediaItem(0)
     }
 
     fun addPreviousMediaItem(mediaItem: MediaItem) {
-        exoPlayer.currentMediaItemIndex
-
         exoPlayer.addMediaItem(0, mediaItem)
-        exoPlayer.prepare()
+        exoPlayer.removeMediaItem(5)
     }
 
     fun setMediaItemList(mediaItems: List<MediaItem>, id: String) {
@@ -99,6 +97,7 @@ class AvitoAudioServiceHandler @Inject constructor(
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         _audioState.value = AvitoAudioState.Playing(isPlaying = isPlaying)
         _audioState.value = AvitoAudioState.CurrentPlaying(exoPlayer.currentMediaItemIndex)
+
         if (isPlaying) {
             GlobalScope.launch(Dispatchers.Main) {
                 startProgressUpdate()

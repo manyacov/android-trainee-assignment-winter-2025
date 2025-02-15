@@ -226,6 +226,7 @@ class AudioPlayerViewModel @Inject constructor(
                         Log.println(Log.ERROR, "QQQQQQ _ 3", track.toString())
 
                         audioList.add(track)
+                        audioList.removeAt(0)
                         withContext(Dispatchers.Main) { addMediaItems(track) }
                     }
                 }
@@ -251,11 +252,13 @@ class AudioPlayerViewModel @Inject constructor(
                             title = it.title,
                             imageUrl = it.imageUrl,
                         )
-                        Log.println(Log.ERROR, "QQQQQQ _ 3", track.toString())
 
                         audioList.add(0, track)
-                        //setMediaItems(currentPath = currentTrackId)
-                        withContext(Dispatchers.Main) { addPrevMediaItems(track) }
+                        audioList.removeAt(audioList.lastIndex)
+
+                        withContext(Dispatchers.Main) {
+                            addPrevMediaItems(track)
+                        }
                     }
                 }
         }
@@ -274,9 +277,6 @@ class AudioPlayerViewModel @Inject constructor(
                     .build()
             )
             .build()
-
-        Log.println(Log.ERROR, "QQQQQQ", (currentSelectedIndex + 2).toString())
-
         audioServiceHandler.addPreviousMediaItem(mediaItem)
     }
 
