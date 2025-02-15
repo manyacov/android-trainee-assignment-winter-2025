@@ -1,6 +1,5 @@
 package com.manyacov.feature_audio_player.presentation
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +14,8 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +28,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.manyacov.resources.R
 import com.manyacov.feature_audio_player.presentation.model.Audio
+import com.manyacov.feature_audio_player.presentation.model.PlayerTime
 import com.manyacov.resources.theme.AvitoPlayerTheme
 import com.manyacov.resources.theme.LocalDim
 import com.manyacov.resources.theme.color.setThemeSliderColors
@@ -42,7 +44,7 @@ fun AudioPlayerScreen(
     modifier: Modifier,
     viewModel: AudioPlayerViewModel
 ) {
-    val context = LocalContext.current
+    val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.setEvent(AudioPlayerContract.Event.OnScreenOpened)
@@ -50,32 +52,29 @@ fun AudioPlayerScreen(
 
     AudioPlayerScreen(
         modifier = modifier,
-        audioList = viewModel.audioList,
-        duration = viewModel.duration,
+        currentTrack = viewModel.currentSelectedAudio,
+        playerTime = state.playerTime,
         progress = viewModel.progress,
-        progressMils = viewModel.progressMils,
         onProgress = { viewModel.setEvent(AudioPlayerContract.Event.OnChangeProgress(it) )},
         isAudioPlaying = viewModel.isPlaying,
         onStart = { viewModel.setEvent(AudioPlayerContract.Event.OnPlayPauseClicked) },
-        onNext = {}
+        onPrevious = { currentTrackId -> viewModel.setEvent(AudioPlayerContract.Event.OnPreviousClicked(currentTrackId)) },
+        onNext = { currentTrackId -> viewModel.setEvent(AudioPlayerContract.Event.OnNextClicked(currentTrackId)) }
     )
 }
 
 @Composable
 internal fun AudioPlayerScreen(
     modifier: Modifier = Modifier,
-    audioList: List<Audio>,
-    duration: Long,
+    currentTrack: Audio = audioDummy,
+    playerTime: PlayerTime,
     progress: Float,
-    progressMils: Long,
     onProgress: (Float) -> Unit = {},
     isAudioPlaying: Boolean,
     onStart: () -> Unit = {},
-    onPrevious: () -> Unit = {},
-    onNext: () -> Unit = {},
+    onPrevious: (String) -> Unit = {},
+    onNext: (String) -> Unit = {},
 ) {
-    val audio = if (audioList.isNotEmpty()) audioList.first() else audioDummy
-
     Column(
         modifier = modifier.fillMaxSize().padding(horizontal = LocalDim.current.spaceSize16),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -88,7 +87,7 @@ internal fun AudioPlayerScreen(
                 .clip(RoundedCornerShape(LocalDim.current.spaceSize14))
                 .background(MaterialTheme.colorScheme.tertiary),
             model = ImageRequest.Builder(LocalContext.current)
-                .data(audio.imageUrl)
+                .data(currentTrack.imageUrl)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(id = R.drawable.ic_placeholer),
@@ -97,12 +96,11 @@ internal fun AudioPlayerScreen(
         )
 
         TrackInfo(
-            title = audio.title,
-            artistName = audio.artist
+            title = currentTrack.title,
+            artistName = currentTrack.artist
         )
 
         Slider(
-            //modifier = Modifier.padding(vertical = LocalDim.current.spaceSize24),
             value = progress,
             onValueChange = { onProgress(it) },
             valueRange = 0f..100f,
@@ -113,24 +111,18 @@ internal fun AudioPlayerScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = formatTime(progressMils.toInt() / 1000))
-            Text(text = formatTime((duration.toInt() - progressMils.toInt()) / 1000))
+            Text(text = playerTime.playingTime)
+            Text(text = playerTime.restTime)
         }
 
         MediaPlayerController(
             modifier = Modifier.padding(vertical = LocalDim.current.spaceSize24),
             isAudioPlaying = isAudioPlaying,
             onStart = onStart,
-            onPrevious = onPrevious,
-            onNext = onNext
+            onPrevious = { onPrevious(currentTrack.id.toString()) },
+            onNext = { onNext(currentTrack.id.toString()) }
         )
     }
-}
-
-fun formatTime(seconds: Int): String {
-    val minutes = seconds / 60
-    val secs = seconds % 60
-    return String.format("%02d:%02d", minutes, secs)
 }
 
 @Composable
@@ -141,17 +133,15 @@ fun AudioPlayerScreenPreview() {
         displayName = "Monica (Demo)",
         id = 1L,
         artist = "Imagine Dragons",
-        //duration = 100,
         title = "Monica (Demo)",
         imageUrl = ""
     )
 
     AvitoPlayerTheme {
         AudioPlayerScreen(
-            duration = 3L,
-            audioList = listOf(audio),
+            playerTime = PlayerTime("00:00", "- 00:00"),
+            currentTrack = audio,
             progress = 50f,
-            progressMils = 0L,
             isAudioPlaying = false,
         )
     }
