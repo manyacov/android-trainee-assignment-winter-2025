@@ -10,7 +10,7 @@ data class Audio(
     val displayName: String,
     val id: Long,
     val artist: String,
-    val duration: Int,
+    //val duration: Int,
     val title: String,
     val imageUrl: String
 ): Parcelable

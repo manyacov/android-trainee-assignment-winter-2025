@@ -12,12 +12,12 @@ class AvitoAudioNotificationAdapter(
 ) : PlayerNotificationManager.MediaDescriptionAdapter {
 
     override fun getCurrentContentTitle(player: Player): CharSequence =
-        player.mediaMetadata.artist ?: "Unknown"
+        player.mediaMetadata.artist ?: "Unknown artist"
 
     override fun createCurrentContentIntent(player: Player): PendingIntent? = pendingIntent
 
     override fun getCurrentContentText(player: Player): CharSequence =
-        player.mediaMetadata.displayTitle ?: "Unknown"
+        player.mediaMetadata.displayTitle ?: "Unknown track"
 
     override fun getCurrentLargeIcon(
         player: Player,

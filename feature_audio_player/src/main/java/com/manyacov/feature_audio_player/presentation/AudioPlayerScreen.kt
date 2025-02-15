@@ -34,7 +34,7 @@ import com.manyacov.ui_kit.details.player.TrackInfo
 import com.manyacov.ui_kit.details.player.MediaPlayerController
 
 private val audioDummy = Audio(
-    "".toUri(), "", 0L, "", 0, "", ""
+    "".toUri(), "", 0L, "", "", ""
 )
 
 @Composable
@@ -53,6 +53,7 @@ fun AudioPlayerScreen(
         audioList = viewModel.audioList,
         duration = viewModel.duration,
         progress = viewModel.progress,
+        progressMils = viewModel.progressMils,
         onProgress = { viewModel.setEvent(AudioPlayerContract.Event.OnChangeProgress(it) )},
         isAudioPlaying = viewModel.isPlaying,
         onStart = { viewModel.setEvent(AudioPlayerContract.Event.OnPlayPauseClicked) },
@@ -66,6 +67,7 @@ internal fun AudioPlayerScreen(
     audioList: List<Audio>,
     duration: Long,
     progress: Float,
+    progressMils: Long,
     onProgress: (Float) -> Unit = {},
     isAudioPlaying: Boolean,
     onStart: () -> Unit = {},
@@ -111,8 +113,8 @@ internal fun AudioPlayerScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = formatTime(progress.toInt()))
-            Text(text = formatTime(progress.toInt()))
+            Text(text = formatTime(progressMils.toInt() / 1000))
+            Text(text = formatTime((duration.toInt() - progressMils.toInt()) / 1000))
         }
 
         MediaPlayerController(
@@ -139,7 +141,7 @@ fun AudioPlayerScreenPreview() {
         displayName = "Monica (Demo)",
         id = 1L,
         artist = "Imagine Dragons",
-        duration = 100,
+        //duration = 100,
         title = "Monica (Demo)",
         imageUrl = ""
     )
@@ -149,6 +151,7 @@ fun AudioPlayerScreenPreview() {
             duration = 3L,
             audioList = listOf(audio),
             progress = 50f,
+            progressMils = 0L,
             isAudioPlaying = false,
         )
     }

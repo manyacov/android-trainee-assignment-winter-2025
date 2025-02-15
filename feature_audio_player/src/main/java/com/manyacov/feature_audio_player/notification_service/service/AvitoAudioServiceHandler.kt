@@ -1,5 +1,6 @@
 package com.manyacov.feature_audio_player.notification_service.service
 
+import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -98,18 +99,19 @@ class AvitoAudioServiceHandler @Inject constructor(
         if (exoPlayer.isPlaying) {
             exoPlayer.pause()
             stopProgressUpdate()
+
         } else {
             exoPlayer.play()
-            _audioState.value = AvitoAudioState.Playing(
-                isPlaying = true
-            )
+            _audioState.value = AvitoAudioState.Playing(isPlaying = true)
+
             startProgressUpdate()
         }
     }
 
     private suspend fun startProgressUpdate() = job.run {
         while (true) {
-            delay(500)
+            delay(1000)
+            Log.println(Log.ERROR, "IIIII", exoPlayer.currentPosition.toString())
             _audioState.value = AvitoAudioState.Progress(exoPlayer.currentPosition)
         }
     }

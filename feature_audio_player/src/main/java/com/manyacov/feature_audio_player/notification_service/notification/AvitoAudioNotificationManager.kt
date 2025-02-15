@@ -64,9 +64,13 @@ class AvitoAudioNotificationManager @Inject constructor(
                 //it.setMediaSessionToken(mediaSession.sessionCompatToken)
                 it.setUseFastForwardActionInCompactView(true)
                 it.setUseRewindActionInCompactView(true)
+
                 it.setUseNextActionInCompactView(true)
+
                 it.setPriority(NotificationCompat.PRIORITY_LOW)
                 it.setPlayer(exoPlayer)
+
+                it.setUsePreviousActionInCompactView(true)
             }
     }
 

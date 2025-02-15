@@ -2,6 +2,7 @@ package com.manyacov.feature_audio_player.presentation
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 private val audioDummy = Audio(
-    "".toUri(), "", 0L, "", 0, "", ""
+    "".toUri(), "", 0L, "", "", ""
 )
 
 @HiltViewModel
@@ -40,7 +41,7 @@ class AudioPlayerViewModel @Inject constructor(
 
     var duration by savedStateHandle.saveable { mutableStateOf(0L) }
     var progress by savedStateHandle.saveable { mutableStateOf(0f) }
-    var progressString by savedStateHandle.saveable { mutableStateOf("00:00") }
+    var progressMils by savedStateHandle.saveable { mutableStateOf(0L) }
     var isPlaying by savedStateHandle.saveable { mutableStateOf(false) }
     var currentSelectedAudio by savedStateHandle.saveable { mutableStateOf(audioDummy) }
     var audioList by savedStateHandle.saveable { mutableStateOf(listOf<Audio>()) }
@@ -52,13 +53,18 @@ class AudioPlayerViewModel @Inject constructor(
                     is AvitoAudioState.Initial -> setState { copy(isLoading = true) }
                     is AvitoAudioState.Buffering -> calculateProgressValue(mediaState.progress)
                     is AvitoAudioState.Playing -> isPlaying = mediaState.isPlaying
-                    is AvitoAudioState.Progress -> calculateProgressValue(mediaState.progress)
+                    is AvitoAudioState.Progress -> {
+                        //mediaState.progress
+                        calculateProgressValue(mediaState.progress)
+                    }
                     is AvitoAudioState.CurrentPlaying -> {
                         currentSelectedAudio = audioList[mediaState.mediaItemIndex]
                     }
 
                     is AvitoAudioState.Ready -> {
                         duration = mediaState.duration
+
+                        Log.println(Log.ERROR, "YYY", duration.toString())
                         setState { copy(isLoading = false) }
                     }
                 }
@@ -84,10 +90,13 @@ class AudioPlayerViewModel @Inject constructor(
     }
 
     private fun calculateProgressValue(currentProgress: Long) {
-        progress =
-            if (currentProgress > 0) ((currentProgress.toFloat() / duration.toFloat()) * 100f)
-            else 0f
-        progressString = formatDuration(currentProgress)
+        progress = if (currentProgress > 0) {
+            ((currentProgress.toFloat() / duration.toFloat()) * 100f)
+        } else 0f
+
+        Log.println(Log.ERROR, "IIIII_1", currentProgress.toString())
+
+        progressMils = currentProgress// formatDuration(currentProgress)
     }
 
     @SuppressLint("DefaultLocale")
@@ -117,7 +126,6 @@ class AudioPlayerViewModel @Inject constructor(
     }
 
     private fun loadTrack() = viewModelScope.launch {
-
         getSessionUseCase.invoke(GetSessionUseCase.Params).collect { info ->
             if (info.second == true) {
                 loadLocal(info.first)
@@ -137,7 +145,7 @@ class AudioPlayerViewModel @Inject constructor(
                 displayName = audioDomain.displayName,
                 id = audioDomain.id,
                 artist = audioDomain.artist,
-                duration = audioDomain.duration,
+                //duration = audioDomain.duration,
                 title = audioDomain.title,
                 imageUrl = audioDomain.imageUrl,
             )

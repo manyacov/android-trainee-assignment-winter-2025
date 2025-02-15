@@ -32,7 +32,7 @@ fun getAudioFromPath(contentResolver: ContentResolver, filePath: String): Audio?
             val duration = it.getInt(it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))
             val title = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE))
 
-            return Audio(uri = uri, displayName = displayName, id = id, artist = artist, duration = duration, title = title, "")
+            return Audio(uri = uri, displayName = displayName, id = id, artist = artist, title = title, "")
         }
     }
 
