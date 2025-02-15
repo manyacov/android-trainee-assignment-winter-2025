@@ -2,10 +2,9 @@ package com.manyacov.feature_downloaded_tracks.presentation
 
 import android.content.Context
 import android.provider.MediaStore
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.viewModelScope
 import com.manyacov.common.presentation.BaseViewModel
+import com.manyacov.domain.avito_player.use_case.SaveCurrentTrackList
 import com.manyacov.domain.avito_player.use_case.SaveSessionUseCase
 import com.manyacov.feature_downloaded_tracks.presentation.mapper.convertToTrackItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,12 +16,13 @@ import javax.inject.Inject
 @HiltViewModel
 class DownloadedViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val saveSessionUseCase: SaveSessionUseCase
+    private val saveSessionUseCase: SaveSessionUseCase,
+    private val saveCurrentTrackList: SaveCurrentTrackList
 ) : BaseViewModel<DownloadedPlaylistContract.Event, DownloadedPlaylistContract.State, DownloadedPlaylistContract.Effect>() {
 
     override fun createInitialState() = DownloadedPlaylistContract.State()
 
-    private val audioFiles: SnapshotStateList<String> = mutableStateListOf()
+    private val audioFiles = mutableSetOf<String>()
 
     private fun loadTracks() = viewModelScope.launch(Dispatchers.IO) {
         setState { copy(isLoading = true) }
@@ -71,5 +71,6 @@ class DownloadedViewModel @Inject constructor(
 
     private fun savePath(filePath: String) = viewModelScope.launch(Dispatchers.IO) {
         saveSessionUseCase.invoke(SaveSessionUseCase.Params(filePath, true))
+        saveCurrentTrackList.invoke(SaveCurrentTrackList.Params(audioFiles.toList()))
     }
 }

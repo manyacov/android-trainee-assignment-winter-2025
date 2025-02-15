@@ -1,8 +1,8 @@
 package com.manyacov.feature_audio_player.notification_service.service
 
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -26,14 +26,23 @@ class AvitoAudioServiceHandler @Inject constructor(
         exoPlayer.addListener(this)
     }
 
-    fun addMediaItem(mediaItem: MediaItem) {
-        exoPlayer.setMediaItem(mediaItem)
+    fun addNextMediaItem(index: Int, mediaItem: MediaItem) {
+        exoPlayer.addMediaItem(index, mediaItem)
         exoPlayer.prepare()
     }
 
-    fun setMediaItemList(mediaItems: List<MediaItem>) {
-        exoPlayer.setMediaItems(mediaItems)
+    fun addPreviousMediaItem(mediaItem: MediaItem) {
+        exoPlayer.currentMediaItemIndex
+
+        exoPlayer.addMediaItem(0, mediaItem)
         exoPlayer.prepare()
+    }
+
+    fun setMediaItemList(mediaItems: List<MediaItem>, id: String) {
+        exoPlayer.setMediaItems(mediaItems)
+        exoPlayer.seekTo(mediaItems.indexOfFirst { it.mediaId == id }, 0)
+        exoPlayer.prepare()
+        exoPlayer.playWhenReady = true
     }
 
     suspend fun onPlayerEvents(
@@ -44,8 +53,12 @@ class AvitoAudioServiceHandler @Inject constructor(
         when (playerEvent) {
             PlayerEvent.Backward -> exoPlayer.seekBack()
             PlayerEvent.Forward -> exoPlayer.seekForward()
-            PlayerEvent.SeekToNext -> exoPlayer.seekToNext()
+
+            PlayerEvent.SeekToNext -> exoPlayer.seekToNextMediaItem()
+            PlayerEvent.SeekToPrevious -> exoPlayer.seekToPreviousMediaItem()
+
             PlayerEvent.PlayPause -> playOrPause()
+
             PlayerEvent.SeekTo -> exoPlayer.seekTo(seekPosition)
             PlayerEvent.SelectedAudioChange -> {
                 when (selectedAudioIndex) {
@@ -95,6 +108,10 @@ class AvitoAudioServiceHandler @Inject constructor(
         }
     }
 
+    override fun onTracksChanged(tracks: Tracks) {
+        _audioState.value = AvitoAudioState.CurrentPlaying(exoPlayer.currentMediaItemIndex)
+    }
+
     private suspend fun playOrPause() {
         if (exoPlayer.isPlaying) {
             exoPlayer.pause()
@@ -111,7 +128,6 @@ class AvitoAudioServiceHandler @Inject constructor(
     private suspend fun startProgressUpdate() = job.run {
         while (true) {
             delay(1000)
-            Log.println(Log.ERROR, "IIIII", exoPlayer.currentPosition.toString())
             _audioState.value = AvitoAudioState.Progress(exoPlayer.currentPosition)
         }
     }
@@ -120,8 +136,6 @@ class AvitoAudioServiceHandler @Inject constructor(
         job?.cancel()
         _audioState.value = AvitoAudioState.Playing(isPlaying = false)
     }
-
-
 }
 
 sealed class PlayerEvent {
@@ -129,6 +143,7 @@ sealed class PlayerEvent {
     data object SelectedAudioChange : PlayerEvent()
     data object Backward : PlayerEvent()
     data object SeekToNext : PlayerEvent()
+    data object SeekToPrevious : PlayerEvent()
     data object Forward : PlayerEvent()
     data object SeekTo : PlayerEvent()
     data object Stop : PlayerEvent()

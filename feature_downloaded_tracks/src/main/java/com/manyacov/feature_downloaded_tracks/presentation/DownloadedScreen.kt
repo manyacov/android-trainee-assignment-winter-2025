@@ -93,7 +93,7 @@ internal fun DownloadedScreen(
         searchString = searchString,
         onSearchValueChange = onSearchValueChange,
         isError = isPermissionRejected,
-        errorDescription = UiIssues.PERMISSION_REJECTED_ERROR.toStringDescription()
+        errorDescription = UiIssues.EMPTY_RESULT.toStringDescription()
     )
 }
 

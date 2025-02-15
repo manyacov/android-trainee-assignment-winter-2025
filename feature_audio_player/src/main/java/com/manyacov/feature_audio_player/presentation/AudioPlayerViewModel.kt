@@ -1,6 +1,5 @@
 package com.manyacov.feature_audio_player.presentation
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -12,16 +11,24 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.manyacov.common.presentation.BaseViewModel
 import com.manyacov.domain.avito_player.use_case.GetApiTrackUseCase
+import com.manyacov.domain.avito_player.use_case.GetCurrentTrackListPartUseCase
+import com.manyacov.domain.avito_player.use_case.GetCurrentTrackListUseCase
+import com.manyacov.domain.avito_player.use_case.GetNextTrackIdUseCase
+import com.manyacov.domain.avito_player.use_case.GetPreviousTrackIdUseCase
 import com.manyacov.domain.avito_player.use_case.GetSessionUseCase
 import com.manyacov.feature_audio_player.notification_service.service.AvitoAudioServiceHandler
 import com.manyacov.feature_audio_player.notification_service.service.AvitoAudioState
 import com.manyacov.feature_audio_player.notification_service.service.PlayerEvent
 import com.manyacov.feature_audio_player.presentation.model.Audio
+import com.manyacov.feature_audio_player.presentation.model.PlayerTime
+import com.manyacov.feature_audio_player.presentation.utils.formatTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 private val audioDummy = Audio(
@@ -34,6 +41,13 @@ class AudioPlayerViewModel @Inject constructor(
     private val audioServiceHandler: AvitoAudioServiceHandler,
     private val getSessionUseCase: GetSessionUseCase,
     private val getApiTrackUseCase: GetApiTrackUseCase,
+
+    private val getCurrentTrackListUseCase: GetCurrentTrackListUseCase,
+    private val getCurrentTrackListPartUseCase: GetCurrentTrackListPartUseCase,
+
+    private val getNextTrackIdUseCase: GetNextTrackIdUseCase,
+    private val getPreviousTrackIdUseCase: GetPreviousTrackIdUseCase,
+
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<AudioPlayerContract.Event, AudioPlayerContract.State, AudioPlayerContract.Effect>() {
 
@@ -41,10 +55,10 @@ class AudioPlayerViewModel @Inject constructor(
 
     var duration by savedStateHandle.saveable { mutableStateOf(0L) }
     var progress by savedStateHandle.saveable { mutableStateOf(0f) }
-    var progressMils by savedStateHandle.saveable { mutableStateOf(0L) }
     var isPlaying by savedStateHandle.saveable { mutableStateOf(false) }
     var currentSelectedAudio by savedStateHandle.saveable { mutableStateOf(audioDummy) }
-    var audioList by savedStateHandle.saveable { mutableStateOf(listOf<Audio>()) }
+    var currentSelectedIndex by savedStateHandle.saveable { mutableStateOf(0) }
+    var audioList by savedStateHandle.saveable { mutableStateOf(mutableListOf<Audio>()) }
 
     init {
         viewModelScope.launch {
@@ -57,7 +71,9 @@ class AudioPlayerViewModel @Inject constructor(
                         //mediaState.progress
                         calculateProgressValue(mediaState.progress)
                     }
+
                     is AvitoAudioState.CurrentPlaying -> {
+                        currentSelectedIndex = mediaState.mediaItemIndex
                         currentSelectedAudio = audioList[mediaState.mediaItemIndex]
                     }
 
@@ -72,10 +88,12 @@ class AudioPlayerViewModel @Inject constructor(
         }
     }
 
-    private fun setMediaItems() {
+    private fun setMediaItems(currentPath: String) {
         audioList.map { audio ->
             MediaItem.Builder()
                 .setUri(audio.uri)
+                //local .setMediaId(audio.uri.toString())
+                .setMediaId(audio.id.toString())
                 .setMediaMetadata(
                     MediaMetadata.Builder()
                         .setAlbumArtist(audio.artist)
@@ -85,8 +103,25 @@ class AudioPlayerViewModel @Inject constructor(
                 )
                 .build()
         }.also {
-            audioServiceHandler.setMediaItemList(it)
+            audioServiceHandler.setMediaItemList(it, currentPath)
         }
+    }
+
+    private fun addMediaItems(audio: Audio) {
+        val mediaItem = MediaItem.Builder()
+            .setUri(audio.uri)
+            //local .setMediaId(audio.uri.toString())
+            .setMediaId(audio.id.toString())
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setAlbumArtist(audio.artist)
+                    .setDisplayTitle(audio.title)
+                    .setSubtitle(audio.displayName)
+                    .build()
+            )
+            .build()
+
+        audioServiceHandler.addNextMediaItem(currentSelectedIndex + 2, mediaItem)
     }
 
     private fun calculateProgressValue(currentProgress: Long) {
@@ -94,16 +129,11 @@ class AudioPlayerViewModel @Inject constructor(
             ((currentProgress.toFloat() / duration.toFloat()) * 100f)
         } else 0f
 
-        Log.println(Log.ERROR, "IIIII_1", currentProgress.toString())
 
-        progressMils = currentProgress// formatDuration(currentProgress)
-    }
+        val playingTime = formatTime(currentProgress / 1000)
+        val restTime = "- ${formatTime((duration - currentProgress) / 1000)}"
 
-    @SuppressLint("DefaultLocale")
-    fun formatDuration(duration: Long): String {
-        val minute = TimeUnit.MINUTES.convert(duration, TimeUnit.MILLISECONDS)
-        val seconds = (minute) - minute * TimeUnit.SECONDS.convert(1, TimeUnit.MINUTES)
-        return String.format("%02d:%02d", minute, seconds)
+        setState { copy(playerTime = PlayerTime(playingTime = playingTime, restTime = restTime)) }
     }
 
     override fun onCleared() {
@@ -114,55 +144,152 @@ class AudioPlayerViewModel @Inject constructor(
     }
 
     private fun loadLocal(path: String?) = viewModelScope.launch {
-        val audio = getAudioFromPath(
-            contentResolver = context.contentResolver,
-            filePath = path.orEmpty()
-        )
 
-        audio?.let {
-            audioList = listOf(audio)
-            setMediaItems()
+        getCurrentTrackListUseCase.invoke(GetCurrentTrackListUseCase.Params).collect { paths ->
+            val audios = paths.mapNotNull {
+                getAudioFromPath(
+                    contentResolver = context.contentResolver,
+                    filePath = it
+                )
+            }
+
+            Log.println(Log.ERROR, "PPPPPP", audios.toString())
+
+            audioList.addAll(audios)
+            setMediaItems(path ?: "")
+
         }
     }
 
-    private fun loadTrack() = viewModelScope.launch {
+    private fun loadTrack() = viewModelScope.launch(Dispatchers.IO) {
         getSessionUseCase.invoke(GetSessionUseCase.Params).collect { info ->
             if (info.second == true) {
                 loadLocal(info.first)
             } else {
-                loadApiTrack(info.first)
+                loadApiTrack(info.first.orEmpty())
             }
         }
     }
 
-    private suspend fun loadApiTrack(id: String?) {
-        val audioDomain =
-            getApiTrackUseCase.invoke(GetApiTrackUseCase.Params(id.orEmpty())).data
+    private fun loadApiTrack(id: String) = viewModelScope.launch {
+        getCurrentTrackListPartUseCase.invoke(GetCurrentTrackListPartUseCase.Params(id))
+            .collect { paths ->
+                Log.println(Log.ERROR, "PPPPPP", paths.toString())
 
-        val audio = audioDomain?.let {
-            Audio(
-                uri = it.uri,
-                displayName = audioDomain.displayName,
-                id = audioDomain.id,
-                artist = audioDomain.artist,
-                //duration = audioDomain.duration,
-                title = audioDomain.title,
-                imageUrl = audioDomain.imageUrl,
-            )
-        }
+                val list = withContext(Dispatchers.IO) {
+                    paths.map { trackId ->
+                        getApiTrackUseCase.invoke(
+                            GetApiTrackUseCase.Params(
+                                trackId
+                            )
+                        ).data
+                    }
+                }
 
-        audio?.let {
-            audioList = listOf(audio)
-            setMediaItems()
+                val trackList = list.mapNotNull { track ->
+                    track?.let {
+                        Audio(
+                            uri = it.uri,
+                            displayName = track.displayName,
+                            id = track.id,
+                            artist = track.artist,
+                            title = track.title,
+                            imageUrl = track.imageUrl,
+                        )
+                    }
+                }
+
+                audioList.addAll(trackList)
+                setMediaItems(currentPath = id)
+            }
+    }
+
+    private fun preloadNextTrack(currentTrackId: String) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            getNextTrackIdUseCase.invoke(GetNextTrackIdUseCase.Params(currentTrackId))
+                .filterNotNull()
+                .collect { id ->
+                    Log.println(Log.ERROR, "QQQQQQ _ 2", id)
+
+                    val audio =
+                        getApiTrackUseCase.invoke(GetApiTrackUseCase.Params(id)).data
+
+                    audio?.let {
+                        val track = Audio(
+                            uri = it.uri,
+                            displayName = it.displayName,
+                            id = it.id,
+                            artist = it.artist,
+                            title = it.title,
+                            imageUrl = it.imageUrl,
+                        )
+                        Log.println(Log.ERROR, "QQQQQQ _ 3", track.toString())
+
+                        audioList.add(track)
+                        withContext(Dispatchers.Main) { addMediaItems(track) }
+                    }
+                }
         }
     }
 
+    private fun preloadPreviousTrack(currentTrackId: String) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            getPreviousTrackIdUseCase.invoke(GetPreviousTrackIdUseCase.Params(currentTrackId))
+                .filterNotNull()
+                .collect { id ->
+                    Log.println(Log.ERROR, "QQQQQQ _ 2", id)
+
+                    val audio =
+                        getApiTrackUseCase.invoke(GetApiTrackUseCase.Params(id)).data
+
+                    audio?.let {
+                        val track = Audio(
+                            uri = it.uri,
+                            displayName = it.displayName,
+                            id = it.id,
+                            artist = it.artist,
+                            title = it.title,
+                            imageUrl = it.imageUrl,
+                        )
+                        Log.println(Log.ERROR, "QQQQQQ _ 3", track.toString())
+
+                        audioList.add(0, track)
+                        //setMediaItems(currentPath = currentTrackId)
+                        withContext(Dispatchers.Main) { addPrevMediaItems(track) }
+                    }
+                }
+        }
+    }
+
+    private fun addPrevMediaItems(audio: Audio) {
+        val mediaItem = MediaItem.Builder()
+            .setUri(audio.uri)
+            //local .setMediaId(audio.uri.toString())
+            .setMediaId(audio.id.toString())
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setAlbumArtist(audio.artist)
+                    .setDisplayTitle(audio.title)
+                    .setSubtitle(audio.displayName)
+                    .build()
+            )
+            .build()
+
+        Log.println(Log.ERROR, "QQQQQQ", (currentSelectedIndex + 2).toString())
+
+        audioServiceHandler.addPreviousMediaItem(mediaItem)
+    }
 
     override fun handleEvent(event: AudioPlayerContract.Event) {
         when (event) {
             is AudioPlayerContract.Event.OnScreenOpened -> loadTrack()
 
-            is AudioPlayerContract.Event.OnNextClicked -> {}
+            is AudioPlayerContract.Event.OnNextClicked -> {
+                viewModelScope.launch {
+                    preloadNextTrack(event.currentTrackId)
+                    audioServiceHandler.onPlayerEvents(PlayerEvent.SeekToNext)
+                }
+            }
 
             is AudioPlayerContract.Event.OnChangeProgress -> {
                 viewModelScope.launch {
@@ -179,7 +306,13 @@ class AudioPlayerViewModel @Inject constructor(
                 }
             }
 
-            is AudioPlayerContract.Event.OnPreviousClicked -> TODO()
+            is AudioPlayerContract.Event.OnPreviousClicked -> {
+                viewModelScope.launch {
+                    preloadPreviousTrack(event.currentTrackId)
+
+                    audioServiceHandler.onPlayerEvents(PlayerEvent.SeekToPrevious)
+                }
+            }
         }
     }
 }
