@@ -5,9 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.manyacov.data.avito_player.datasource.local.dao.AvitoPlayerDao
-import com.manyacov.data.avito_player.datasource.local.model.AlbumEntity
-import com.manyacov.data.avito_player.datasource.local.model.ArtistEntity
-import com.manyacov.data.avito_player.datasource.local.model.TrackEntity
+import com.manyacov.data.avito_player.datasource.local.model.PlaylistInfoEntity
 
 class AvitoPlayerDatabase internal constructor(private val database: AvitoPlayerRoomDatabase) {
     val avitoPlayerDao: AvitoPlayerDao
@@ -15,7 +13,7 @@ class AvitoPlayerDatabase internal constructor(private val database: AvitoPlayer
 }
 
 @Database(
-    entities = [TrackEntity::class, ArtistEntity::class, AlbumEntity::class],
+    entities = [PlaylistInfoEntity::class],
     version = 1,
     exportSchema = false
 )

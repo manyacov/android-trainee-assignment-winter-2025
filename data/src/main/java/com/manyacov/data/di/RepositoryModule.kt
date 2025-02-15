@@ -1,6 +1,8 @@
 package com.manyacov.data.di
 
+import com.manyacov.data.avito_player.repository.LocalPlaylistRepositoryImpl
 import com.manyacov.data.avito_player.repository.PlaylistRepositoryImpl
+import com.manyacov.domain.avito_player.repository.LocalPlaylistRepository
 import com.manyacov.domain.avito_player.repository.PlaylistRepository
 import dagger.Binds
 import dagger.Module
@@ -15,4 +17,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindPlaylistRepository(playlistRepositoryImpl: PlaylistRepositoryImpl): PlaylistRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLocalPlaylistRepository(localPlaylistRepositoryImpl: LocalPlaylistRepositoryImpl): LocalPlaylistRepository
 }
