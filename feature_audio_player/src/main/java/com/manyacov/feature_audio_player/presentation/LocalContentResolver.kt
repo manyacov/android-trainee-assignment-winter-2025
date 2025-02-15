@@ -13,7 +13,7 @@ fun getAudioFromPath(contentResolver: ContentResolver, filePath: String): Audio?
         MediaStore.Audio.Media.ARTIST,
         MediaStore.Audio.Media.DATA,
         MediaStore.Audio.Media.DURATION,
-        MediaStore.Audio.Media.TITLE
+        MediaStore.Audio.Media.TITLE,
     )
 
     val cursor = contentResolver.query(
@@ -29,7 +29,6 @@ fun getAudioFromPath(contentResolver: ContentResolver, filePath: String): Audio?
             val id = it.getLong(it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
             val displayName = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME))
             val artist = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST))
-            val duration = it.getInt(it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))
             val title = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE))
 
             return Audio(uri = uri, displayName = displayName, id = id, artist = artist, title = title, "")
