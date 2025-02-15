@@ -35,18 +35,18 @@ fun Navigation(
 ) {
     val navController = rememberNavController()
 
-    var bottomBarState by remember { mutableStateOf(true) }
+    var isBottomBarVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         navController.currentBackStackEntryFlow.collectLatest { backStackEntry ->
             delay(BOTTOM_NAV_CHANGING_DURATION)
-            bottomBarState = backStackEntry.destination.route != NavItem.Song.path
+            isBottomBarVisible = backStackEntry.destination.route != NavItem.Song.path
         }
     }
 
     Scaffold(
         bottomBar = {
-            if (bottomBarState) {
+            if (isBottomBarVisible) {
                 BottomNavigationBar(navController)
             }
         }
