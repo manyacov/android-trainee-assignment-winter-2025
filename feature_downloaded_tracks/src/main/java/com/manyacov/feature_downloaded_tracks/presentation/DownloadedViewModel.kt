@@ -26,7 +26,7 @@ class DownloadedViewModel @Inject constructor(
     override fun createInitialState() = DownloadedPlaylistContract.State()
 
     private val searchText = MutableStateFlow("")
-    private val fullPlaylist = mutableListOf<TrackItem>()
+    private val fullPlaylist = mutableSetOf<TrackItem>()
 
     private val audioFilesPaths = mutableSetOf<String>()
 
@@ -38,7 +38,7 @@ class DownloadedViewModel @Inject constructor(
         searchText.collectLatest { searchText ->
             setState {
                 copy(searchString = searchText, playlist = if (searchString.isBlank()) {
-                    fullPlaylist
+                    fullPlaylist.map { it }
                 } else {
                     fullPlaylist.filter {
                         it.title.lowercase().contains(searchText.lowercase())

@@ -2,7 +2,6 @@ package com.manyacov.feature_downloaded_tracks.presentation.mapper
 
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
-import android.util.Log
 import com.manyacov.ui_kit.list_items.TrackItem
 import java.io.File
 
@@ -34,8 +33,6 @@ fun convertToTrackItem(filePath: String): TrackItem? {
                 albumArtBitmap = albumArtBitmap
             )
         } else {
-            Log.println(Log.ERROR, "UUUUU", "not exist")
-
             null
         }
     } catch (e: IllegalArgumentException) {
@@ -52,8 +49,4 @@ fun convertToTrackItem(filePath: String): TrackItem? {
 fun getAudioTitleFromPath(filePath: String): String {
     val fileName = filePath.substringAfterLast("/")
     return fileName.substringBeforeLast(".")
-}
-
-fun saveBitmapToFile(bitmap: ByteArray): String {
-    return "path/to/saved/image"
 }

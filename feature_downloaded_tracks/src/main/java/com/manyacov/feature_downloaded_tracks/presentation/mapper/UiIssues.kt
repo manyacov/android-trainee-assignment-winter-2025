@@ -9,6 +9,7 @@ import com.manyacov.resources.R
 fun UiIssues.toStringDescription(): String {
     return when(this) {
         UiIssues.PERMISSION_REJECTED_ERROR -> stringResource(R.string.error_rejected_permissions)
+        UiIssues.EMPTY_RESULT -> stringResource(R.string.error_empty_list)
         else -> stringResource(R.string.unknown_error)
     }
 }

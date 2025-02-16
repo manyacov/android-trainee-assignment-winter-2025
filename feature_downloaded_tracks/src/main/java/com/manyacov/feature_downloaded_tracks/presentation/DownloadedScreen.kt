@@ -53,8 +53,9 @@ fun DownloadedScreen(
     ) { permissions ->
         hasPermission = permissions.entries.any { entry -> entry.value }
         if (hasPermission) {
-            Log.println(Log.ERROR, "TTTTTT", "")
             viewModel.setEvent(DownloadedPlaylistContract.Event.OnReloadClicked)
+        } else {
+            viewModel.setEvent(DownloadedPlaylistContract.Event.OnRejectedPermissions)
         }
     }
 
@@ -104,6 +105,7 @@ internal fun DownloadedScreen(
     onTrackClicked: (String) -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
 ) {
+    val isError = isPermissionRejected || playlist.isEmpty()
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -120,8 +122,12 @@ internal fun DownloadedScreen(
             onTrackClicked = onTrackClicked,
             searchString = searchString,
             onSearchValueChange = onSearchValueChange,
-            isError = isPermissionRejected,
-            errorDescription = UiIssues.EMPTY_RESULT.toStringDescription()
+            isError = isError,
+            errorDescription = if (isPermissionRejected) {
+                UiIssues.PERMISSION_REJECTED_ERROR.toStringDescription()
+            } else {
+                UiIssues.EMPTY_RESULT.toStringDescription()
+            }
         )
     }
 }
