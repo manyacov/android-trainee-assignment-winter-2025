@@ -2,7 +2,6 @@ package com.manyacov.feature_audio_player.presentation.local
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
@@ -18,6 +17,7 @@ import com.manyacov.feature_audio_player.presentation.AudioPlayerContract
 import com.manyacov.feature_audio_player.presentation.utils.getAudioFromPath
 import com.manyacov.feature_audio_player.presentation.model.Audio
 import com.manyacov.feature_audio_player.presentation.model.PlayerTime
+import com.manyacov.feature_audio_player.presentation.model.audioDummy
 import com.manyacov.feature_audio_player.presentation.utils.formatTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,10 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-private val audioDummy = Audio(
-    "".toUri(), "", 0L, "", "", ""
-)
 
 @HiltViewModel
 class LocalAudioPlayerViewModel @Inject constructor(
