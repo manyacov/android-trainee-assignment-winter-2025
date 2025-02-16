@@ -1,6 +1,5 @@
 package com.manyacov.feature_api_tracks.presentation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,17 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -53,7 +49,6 @@ fun ApiPlaylistScreen(
         isError = state.issues != null,
         errorDescription = state.issues?.toStringDescription().orEmpty(),
         searchString = state.searchString,
-        onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
         onTrackClicked = { path, tracksIds ->
             viewModel.setEvent(ApiPlaylistContract.Event.OnTrackClicked(path, tracksIds))
             navController.navigate(NavPath.API_PLAYER)
@@ -69,7 +64,6 @@ internal fun ApiPlaylistScreen(
     searchString: String = "",
     isError: Boolean = false,
     errorDescription: String = "",
-    onReloadClicked: () -> Unit = {},
     onTrackClicked: (String, List<Long>) -> Unit = { _, _ -> },
     onSearchValueChange: (String) -> Unit = {}
 ) {
@@ -88,15 +82,6 @@ internal fun ApiPlaylistScreen(
                 modifier = Modifier.weight(1f),
                 value = searchString,
                 onValueChange = { value -> onSearchValueChange(value) },
-            )
-
-            Icon(
-                modifier = Modifier
-                    .size(LocalDim.current.spaceSize42)
-                    .clickable { onReloadClicked() },
-                painter = painterResource(R.drawable.ic_reload),
-                tint = MaterialTheme.colorScheme.primary,
-                contentDescription = null,
             )
         }
 

@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.emptyFlow
 
 class ApiPlaylistContract {
     sealed class Event : UiEvent {
-        data object OnReloadClicked : Event()
         data class UpdateSearchText(val searchText: String) : Event()
         data class OnTrackClicked(val trackId: String, val tracksIds: List<Long>) : Event()
     }

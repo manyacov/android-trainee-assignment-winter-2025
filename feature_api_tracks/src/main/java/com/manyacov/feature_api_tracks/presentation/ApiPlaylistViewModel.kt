@@ -56,7 +56,6 @@ class ApiPlaylistViewModel @Inject constructor(
 
     override fun handleEvent(event: ApiPlaylistContract.Event) {
         when (event) {
-            is ApiPlaylistContract.Event.OnReloadClicked -> {} //TODO: change reload logic
             is ApiPlaylistContract.Event.UpdateSearchText -> searchText.value = event.searchText
             is ApiPlaylistContract.Event.OnTrackClicked -> { savePath(event.trackId, event.tracksIds) }
         }
