@@ -14,7 +14,6 @@ class SessionCacheServiceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ): SessionCacheService {
     private val TRACK_PATH_KEY = stringPreferencesKey("track_path")
-    private val IS_LOCAL_KEY = booleanPreferencesKey("is_local")
 
     override suspend fun saveTrackPath(path: String) {
         dataStore.edit { preferences ->
@@ -28,22 +27,9 @@ class SessionCacheServiceImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveIsLocal(isLocal: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[IS_LOCAL_KEY] = isLocal
-        }
-    }
-
-    override fun getIsLocal(): Flow<Boolean?> {
-        return dataStore.data.map { preferences ->
-            preferences[IS_LOCAL_KEY]
-        }
-    }
-
     override suspend fun clearSession() {
         dataStore.edit { preferences ->
             preferences.remove(TRACK_PATH_KEY)
-            preferences.remove(IS_LOCAL_KEY)
         }
     }
 

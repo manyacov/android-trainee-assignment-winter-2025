@@ -26,6 +26,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import com.manyacov.common.NavPath
 import com.manyacov.domain.avito_player.model.PlaylistTrack
 import com.manyacov.feature_api_tracks.presentation.mapper.toStringDescription
 import com.manyacov.feature_api_tracks.presentation.mapper.toTrackItem
@@ -55,7 +56,7 @@ fun ApiPlaylistScreen(
         onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
         onTrackClicked = { path, tracksIds ->
             viewModel.setEvent(ApiPlaylistContract.Event.OnTrackClicked(path, tracksIds))
-            navController.navigate("track")
+            navController.navigate(NavPath.API_PLAYER)
         },
         onSearchValueChange = { viewModel.setEvent(ApiPlaylistContract.Event.UpdateSearchText(it)) }
     )

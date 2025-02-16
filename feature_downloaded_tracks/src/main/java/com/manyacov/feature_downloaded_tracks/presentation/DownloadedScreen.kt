@@ -20,9 +20,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.manyacov.common.NavPath
 import com.manyacov.domain.avito_player.utils.UiIssues
 import com.manyacov.feature_downloaded_tracks.presentation.mapper.toStringDescription
 
@@ -69,6 +74,7 @@ fun DownloadedScreen(
 
     DownloadedScreen(
         modifier = modifier,
+        isLoading = state.isLoading,
         playlist = state.playlist,
         searchString = state.searchString,
         isPermissionRejected = state.isPermissionsRejected,
@@ -78,7 +84,7 @@ fun DownloadedScreen(
         onSearchClicked = { viewModel.setEvent(DownloadedPlaylistContract.Event.OnSearchClicked) },
         onTrackClicked = { path ->
             viewModel.setEvent(DownloadedPlaylistContract.Event.OnTrackClicked(path))
-            navController.navigate("track")
+            navController.navigate(NavPath.LOCAL_PLAYER)
         },
         onSearchValueChange = {
             viewModel.setEvent(DownloadedPlaylistContract.Event.UpdateSearchText(it))
@@ -89,6 +95,7 @@ fun DownloadedScreen(
 @Composable
 internal fun DownloadedScreen(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     playlist: List<TrackItem>,
     searchString: String = "",
     isPermissionRejected: Boolean,
@@ -97,17 +104,26 @@ internal fun DownloadedScreen(
     onTrackClicked: (String) -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
 ) {
-    SearchPlaylist(
-        modifier = modifier.padding(LocalDim.current.spaceSize16),
-        trackList = playlist,
-        onReloadClicked = onReloadClicked,
-        onSearchClicked = onSearchClicked,
-        onTrackClicked = onTrackClicked,
-        searchString = searchString,
-        onSearchValueChange = onSearchValueChange,
-        isError = isPermissionRejected,
-        errorDescription = UiIssues.EMPTY_RESULT.toStringDescription()
-    )
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        }
+
+        SearchPlaylist(
+            modifier = Modifier.padding(LocalDim.current.spaceSize16),
+            trackList = playlist,
+            onReloadClicked = onReloadClicked,
+            onSearchClicked = onSearchClicked,
+            onTrackClicked = onTrackClicked,
+            searchString = searchString,
+            onSearchValueChange = onSearchValueChange,
+            isError = isPermissionRejected,
+            errorDescription = UiIssues.EMPTY_RESULT.toStringDescription()
+        )
+    }
 }
 
 @Preview
@@ -115,6 +131,7 @@ internal fun DownloadedScreen(
 fun DownloadedScreenPreview() {
     AvitoPlayerTheme {
         DownloadedScreen(
+            isLoading = true,
             isPermissionRejected = true,
             playlist = listOf()
         )

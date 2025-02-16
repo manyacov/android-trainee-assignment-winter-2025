@@ -95,7 +95,7 @@ class DownloadedViewModel @Inject constructor(
     }
 
     private fun savePath(filePath: String) = viewModelScope.launch(Dispatchers.IO) {
-        saveSessionUseCase.invoke(SaveSessionUseCase.Params(filePath, true))
+        saveSessionUseCase.invoke(SaveSessionUseCase.Params(filePath))
         saveCurrentTrackListUseCase.invoke(SaveCurrentTrackListUseCase.Params(audioFilesPaths.toList()))
     }
 }

@@ -1,4 +1,4 @@
-package com.manyacov.feature_audio_player.presentation
+package com.manyacov.feature_audio_player.presentation.utils
 
 import android.content.ContentResolver
 import android.net.Uri
@@ -7,6 +7,7 @@ import com.manyacov.feature_audio_player.presentation.model.Audio
 
 fun getAudioFromPath(contentResolver: ContentResolver, filePath: String): Audio? {
     val uri = Uri.parse(filePath)
+
     val projection = arrayOf(
         MediaStore.Audio.Media._ID,
         MediaStore.Audio.Media.DISPLAY_NAME,
@@ -14,6 +15,7 @@ fun getAudioFromPath(contentResolver: ContentResolver, filePath: String): Audio?
         MediaStore.Audio.Media.DATA,
         MediaStore.Audio.Media.DURATION,
         MediaStore.Audio.Media.TITLE,
+        MediaStore.Audio.Media.ALBUM_ID,
     )
 
     val cursor = contentResolver.query(
@@ -30,8 +32,11 @@ fun getAudioFromPath(contentResolver: ContentResolver, filePath: String): Audio?
             val displayName = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME))
             val artist = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST))
             val title = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE))
+            val albumId = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 
-            return Audio(uri = uri, displayName = displayName, id = id, artist = artist, title = title, "")
+            val imageUrl = "content://media/external/audio/albumart/${it.getLong(albumId)}"
+
+            return Audio(uri = uri, displayName = displayName, id = id, artist = artist, title = title, imageUrl = imageUrl)
         }
     }
 

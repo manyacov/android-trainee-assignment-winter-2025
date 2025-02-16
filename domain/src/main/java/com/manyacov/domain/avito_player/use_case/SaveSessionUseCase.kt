@@ -10,7 +10,6 @@ class SaveSessionUseCase @Inject constructor(
 
     override suspend fun execute(params: Params) {
         sessionCacheService.saveTrackPath(params.path)
-        sessionCacheService.saveIsLocal(params.isLocal)
     }
-    data class Params(val path: String, val isLocal: Boolean)
+    data class Params(val path: String)
 }

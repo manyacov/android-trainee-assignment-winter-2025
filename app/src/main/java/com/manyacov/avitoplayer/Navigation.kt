@@ -22,8 +22,10 @@ import com.manyacov.common.Constants.BOTTOM_NAV_CHANGING_DURATION
 import com.manyacov.common.Constants.SCREEN_CHANGING_DURATION
 import com.manyacov.feature_api_tracks.presentation.ApiPlaylistScreen
 import com.manyacov.feature_api_tracks.presentation.ApiPlaylistViewModel
-import com.manyacov.feature_audio_player.presentation.AudioPlayerScreen
-import com.manyacov.feature_audio_player.presentation.AudioPlayerViewModel
+import com.manyacov.feature_audio_player.presentation.local.LocalAudioPlayerScreen
+import com.manyacov.feature_audio_player.presentation.local.LocalAudioPlayerViewModel
+import com.manyacov.feature_audio_player.presentation.remote.RemoteAudioPlayerScreen
+import com.manyacov.feature_audio_player.presentation.remote.RemoteAudioPlayerViewModel
 import com.manyacov.feature_downloaded_tracks.presentation.DownloadedScreen
 import com.manyacov.feature_downloaded_tracks.presentation.DownloadedViewModel
 import kotlinx.coroutines.delay
@@ -40,7 +42,9 @@ fun Navigation(
     LaunchedEffect(Unit) {
         navController.currentBackStackEntryFlow.collectLatest { backStackEntry ->
             delay(BOTTOM_NAV_CHANGING_DURATION)
-            isBottomBarVisible = backStackEntry.destination.route != NavItem.Song.path
+            isBottomBarVisible =
+                backStackEntry.destination.route == NavItem.Online.path
+                        || backStackEntry.destination.route == NavItem.Downloaded.path
         }
     }
 
@@ -81,12 +85,25 @@ fun Navigation(
                 )
             }
             composable(
-                route = NavItem.Song.path,
+                route = NavItem.LocalPlayer.path,
                 enterTransition = { fadeIn(animationSpec = tween(SCREEN_CHANGING_DURATION)) })
             {
-                val viewModel = hiltViewModel<AudioPlayerViewModel>()
+                val viewModel = hiltViewModel<LocalAudioPlayerViewModel>()
 
-                AudioPlayerScreen(
+                LocalAudioPlayerScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    viewModel = viewModel,
+                )
+
+                startService()
+            }
+            composable(
+                route = NavItem.ApiPlayer.path,
+                enterTransition = { fadeIn(animationSpec = tween(SCREEN_CHANGING_DURATION)) })
+            {
+                val viewModel = hiltViewModel<RemoteAudioPlayerViewModel>()
+
+                RemoteAudioPlayerScreen(
                     modifier = Modifier.padding(innerPadding),
                     viewModel = viewModel,
                 )

@@ -63,7 +63,7 @@ class ApiPlaylistViewModel @Inject constructor(
     }
 
     private fun savePath(trackId: String, tracksIds: List<Long>) = viewModelScope.launch(Dispatchers.IO) {
-        saveSessionUseCase.invoke(SaveSessionUseCase.Params(trackId, false))
+        saveSessionUseCase.invoke(SaveSessionUseCase.Params(trackId))
         saveCurrentTrackListUseCase.invoke(SaveCurrentTrackListUseCase.Params(tracksIds.map { it.toString() }))
     }
 }
