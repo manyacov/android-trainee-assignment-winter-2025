@@ -17,11 +17,21 @@ import com.manyacov.resources.theme.LocalDim
 import com.manyacov.ui_kit.components.SearchPlaylist
 import com.manyacov.ui_kit.list_items.TrackItem
 import android.Manifest
-import android.os.Build
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.manyacov.common.NavPath
 import com.manyacov.domain.avito_player.utils.UiIssues
 import com.manyacov.feature_downloaded_tracks.presentation.mapper.toStringDescription
 
+@SuppressLint("InlinedApi")
 @Composable
 fun DownloadedScreen(
     modifier: Modifier = Modifier,
@@ -30,42 +40,52 @@ fun DownloadedScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    var permissionGranted by remember { mutableStateOf(false) }
+    val permissionsToCheck = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.READ_MEDIA_AUDIO
+    )
+
+    var hasPermission by remember { mutableStateOf(false) }
+    var requestPermissions by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        permissionGranted = isGranted
-
-        if (permissionGranted) {
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        hasPermission = permissions.entries.any { entry -> entry.value }
+        if (hasPermission) {
             viewModel.setEvent(DownloadedPlaylistContract.Event.OnReloadClicked)
         } else {
             viewModel.setEvent(DownloadedPlaylistContract.Event.OnRejectedPermissions)
         }
     }
 
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
-        if (!permissionGranted) {
-            permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        hasPermission = permissionsToCheck.any {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (!hasPermission) {
+            requestPermissions = true
+            permissionLauncher.launch(permissionsToCheck)
+        } else {
+            viewModel.setEvent(DownloadedPlaylistContract.Event.OnReloadClicked)
         }
     }
 
     DownloadedScreen(
         modifier = modifier,
+        isLoading = state.isLoading,
         playlist = state.playlist,
         searchString = state.searchString,
         isPermissionRejected = state.isPermissionsRejected,
         onReloadClicked = {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-            } else {
-                permissionLauncher.launch(Manifest.permission.READ_MEDIA_AUDIO)
-            }
+            permissionLauncher.launch(permissionsToCheck)
         },
         onSearchClicked = { viewModel.setEvent(DownloadedPlaylistContract.Event.OnSearchClicked) },
         onTrackClicked = { path ->
             viewModel.setEvent(DownloadedPlaylistContract.Event.OnTrackClicked(path))
-            navController.navigate("track")
+            navController.navigate(NavPath.LOCAL_PLAYER)
         },
         onSearchValueChange = {
             viewModel.setEvent(DownloadedPlaylistContract.Event.UpdateSearchText(it))
@@ -76,6 +96,7 @@ fun DownloadedScreen(
 @Composable
 internal fun DownloadedScreen(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     playlist: List<TrackItem>,
     searchString: String = "",
     isPermissionRejected: Boolean,
@@ -84,17 +105,31 @@ internal fun DownloadedScreen(
     onTrackClicked: (String) -> Unit = {},
     onSearchValueChange: (String) -> Unit = {}
 ) {
-    SearchPlaylist(
-        modifier = modifier.padding(LocalDim.current.spaceSize16),
-        trackList = playlist,
-        onReloadClicked = onReloadClicked,
-        onSearchClicked = onSearchClicked,
-        onTrackClicked = onTrackClicked,
-        searchString = searchString,
-        onSearchValueChange = onSearchValueChange,
-        isError = isPermissionRejected,
-        errorDescription = UiIssues.PERMISSION_REJECTED_ERROR.toStringDescription()
-    )
+    val isError = isPermissionRejected || playlist.isEmpty()
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        }
+
+        SearchPlaylist(
+            modifier = Modifier.padding(LocalDim.current.spaceSize16),
+            trackList = playlist,
+            onReloadClicked = onReloadClicked,
+            onSearchClicked = onSearchClicked,
+            onTrackClicked = onTrackClicked,
+            searchString = searchString,
+            onSearchValueChange = onSearchValueChange,
+            isError = isError,
+            errorDescription = if (isPermissionRejected) {
+                UiIssues.PERMISSION_REJECTED_ERROR.toStringDescription()
+            } else {
+                UiIssues.EMPTY_RESULT.toStringDescription()
+            }
+        )
+    }
 }
 
 @Preview
@@ -102,6 +137,7 @@ internal fun DownloadedScreen(
 fun DownloadedScreenPreview() {
     AvitoPlayerTheme {
         DownloadedScreen(
+            isLoading = true,
             isPermissionRejected = true,
             playlist = listOf()
         )

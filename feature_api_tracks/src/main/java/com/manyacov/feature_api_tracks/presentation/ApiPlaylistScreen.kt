@@ -1,32 +1,28 @@
 package com.manyacov.feature_api_tracks.presentation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import com.manyacov.common.NavPath
 import com.manyacov.domain.avito_player.model.PlaylistTrack
 import com.manyacov.feature_api_tracks.presentation.mapper.toStringDescription
 import com.manyacov.feature_api_tracks.presentation.mapper.toTrackItem
@@ -39,10 +35,11 @@ import com.manyacov.ui_kit.components.TextInfoView
 import com.manyacov.ui_kit.details.AppSearchBar
 import com.manyacov.ui_kit.list_items.PlaylistItem
 
-@Composable()
+@Composable
 fun ApiPlaylistScreen(
     modifier: Modifier = Modifier,
-    viewModel: ApiPlaylistViewModel
+    viewModel: ApiPlaylistViewModel,
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -52,7 +49,10 @@ fun ApiPlaylistScreen(
         isError = state.issues != null,
         errorDescription = state.issues?.toStringDescription().orEmpty(),
         searchString = state.searchString,
-        onReloadClicked = { viewModel.setEvent(ApiPlaylistContract.Event.OnReloadClicked) },
+        onTrackClicked = { path, tracksIds ->
+            viewModel.setEvent(ApiPlaylistContract.Event.OnTrackClicked(path, tracksIds))
+            navController.navigate(NavPath.API_PLAYER)
+        },
         onSearchValueChange = { viewModel.setEvent(ApiPlaylistContract.Event.UpdateSearchText(it)) }
     )
 }
@@ -64,12 +64,13 @@ internal fun ApiPlaylistScreen(
     searchString: String = "",
     isError: Boolean = false,
     errorDescription: String = "",
-    onReloadClicked: () -> Unit = {},
+    onTrackClicked: (String, List<Long>) -> Unit = { _, _ -> },
     onSearchValueChange: (String) -> Unit = {}
 ) {
-
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .padding(LocalDim.current.spaceSize16)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(LocalDim.current.spaceSize16)
     ) {
         Row(
@@ -82,15 +83,6 @@ internal fun ApiPlaylistScreen(
                 value = searchString,
                 onValueChange = { value -> onSearchValueChange(value) },
             )
-
-            Icon(
-                modifier = Modifier
-                    .size(LocalDim.current.spaceSize42)
-                    .clickable { onReloadClicked() },
-                painter = painterResource(R.drawable.ic_reload),
-                tint = MaterialTheme.colorScheme.primary,
-                contentDescription = "ic_reload_clickable",
-            )
         }
 
         if (isError) {
@@ -101,7 +93,7 @@ internal fun ApiPlaylistScreen(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 12.dp),
+                contentPadding = PaddingValues(),
                 state = items.rememberLazyListState()
             ) {
                 items(
@@ -111,7 +103,11 @@ internal fun ApiPlaylistScreen(
                 ) { index ->
                     val song = items[index]
                     song?.let {
-                        PlaylistItem(trackItem = song.toTrackItem())
+                        PlaylistItem(
+                            trackItem = song.toTrackItem(),
+                            onClick = { info ->
+                                onTrackClicked(info, items.itemSnapshotList.items.map { it.id }) }
+                        )
                     }
                 }
                 when {
@@ -128,12 +124,10 @@ internal fun ApiPlaylistScreen(
 
                     items.itemCount == 0 && !items.loadState.isLoading -> {
                         item {
-                            Box(
+                            TextInfoView(
                                 modifier = Modifier.fillParentMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(stringResource(R.string.error_empty_list))
-                            }
+                                info = stringResource(R.string.error_empty_list)
+                            )
                         }
                     }
                 }

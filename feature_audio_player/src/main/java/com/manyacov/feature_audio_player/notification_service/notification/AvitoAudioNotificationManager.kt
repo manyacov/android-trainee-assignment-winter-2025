@@ -41,7 +41,9 @@ class AvitoAudioNotificationManager @Inject constructor(
 
     private fun startForeGroundNotificationService(mediaSessionService: MediaSessionService) {
         val notification = Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setVisibility(Notification.VISIBILITY_PUBLIC)
             .setCategory(Notification.CATEGORY_SERVICE)
+            .setCategory(NotificationCompat.EXTRA_MEDIA_SESSION)
             .build()
         mediaSessionService.startForeground(NOTIFICATION_ID, notification)
     }
@@ -65,8 +67,9 @@ class AvitoAudioNotificationManager @Inject constructor(
                 it.setUseFastForwardActionInCompactView(true)
                 it.setUseRewindActionInCompactView(true)
                 it.setUseNextActionInCompactView(true)
-                it.setPriority(NotificationCompat.PRIORITY_LOW)
+                it.setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 it.setPlayer(exoPlayer)
+                it.setUsePreviousActionInCompactView(true)
             }
     }
 

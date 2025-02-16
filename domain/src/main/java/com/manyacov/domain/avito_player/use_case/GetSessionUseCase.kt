@@ -12,5 +12,6 @@ class GetSessionUseCase @Inject constructor(
     override suspend fun execute(params: Params): Flow<String?> {
         return sessionCacheService.getTrackPath()
     }
+
     data object Params
 }

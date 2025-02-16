@@ -11,3 +11,10 @@ object Constants {
 
     const val SEARCH_DEBOUNCE_MILLS = 200
 }
+
+object NavPath {
+    const val DOWNLOADED = "downloaded"
+    const val ONLINE = "online"
+    const val LOCAL_PLAYER = "local_player"
+    const val API_PLAYER = "api_player"
+}

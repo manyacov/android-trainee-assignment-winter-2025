@@ -2,27 +2,51 @@ package com.manyacov.feature_downloaded_tracks.presentation
 
 import android.content.Context
 import android.provider.MediaStore
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.viewModelScope
 import com.manyacov.common.presentation.BaseViewModel
+import com.manyacov.domain.avito_player.use_case.SaveCurrentTrackListUseCase
 import com.manyacov.domain.avito_player.use_case.SaveSessionUseCase
 import com.manyacov.feature_downloaded_tracks.presentation.mapper.convertToTrackItem
+import com.manyacov.ui_kit.list_items.TrackItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DownloadedViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val saveSessionUseCase: SaveSessionUseCase
+    private val saveSessionUseCase: SaveSessionUseCase,
+    private val saveCurrentTrackListUseCase: SaveCurrentTrackListUseCase
 ) : BaseViewModel<DownloadedPlaylistContract.Event, DownloadedPlaylistContract.State, DownloadedPlaylistContract.Effect>() {
 
     override fun createInitialState() = DownloadedPlaylistContract.State()
 
-    private val audioFiles: SnapshotStateList<String> = mutableStateListOf()
+    private val searchText = MutableStateFlow("")
+    private val fullPlaylist = mutableSetOf<TrackItem>()
+
+    private val audioFilesPaths = mutableSetOf<String>()
+
+    init {
+        searchSong()
+    }
+
+    private fun searchSong() = viewModelScope.launch {
+        searchText.collectLatest { searchText ->
+            setState {
+                copy(searchString = searchText, playlist = if (searchString.isBlank()) {
+                    fullPlaylist.map { it }
+                } else {
+                    fullPlaylist.filter {
+                        it.title.lowercase().contains(searchText.lowercase())
+                    }
+                })
+            }
+        }
+    }
 
     private fun loadTracks() = viewModelScope.launch(Dispatchers.IO) {
         setState { copy(isLoading = true) }
@@ -40,11 +64,12 @@ class DownloadedViewModel @Inject constructor(
             val dataIndex = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
             while (it.moveToNext()) {
                 val path = it.getString(dataIndex)
-                audioFiles.add(path)
+                audioFilesPaths.add(path)
             }
         }
 
-        val result = audioFiles.map { convertToTrackItem(it) }
+        val result = audioFilesPaths.mapNotNull { convertToTrackItem(it) }
+        fullPlaylist.addAll(result)
 
         setState { copy(isLoading = false, playlist = result, isPermissionsRejected = false) }
     }
@@ -64,12 +89,13 @@ class DownloadedViewModel @Inject constructor(
                 )
             }
 
-            is DownloadedPlaylistContract.Event.UpdateSearchText -> setState { copy(searchString = event.searchText) }
+            is DownloadedPlaylistContract.Event.UpdateSearchText -> searchText.value = event.searchText
             is DownloadedPlaylistContract.Event.OnTrackClicked -> { savePath(event.filePath) }
         }
     }
 
     private fun savePath(filePath: String) = viewModelScope.launch(Dispatchers.IO) {
         saveSessionUseCase.invoke(SaveSessionUseCase.Params(filePath))
+        saveCurrentTrackListUseCase.invoke(SaveCurrentTrackListUseCase.Params(audioFilesPaths.toList()))
     }
 }

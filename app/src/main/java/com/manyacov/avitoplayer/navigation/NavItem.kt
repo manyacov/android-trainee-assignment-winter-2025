@@ -1,5 +1,6 @@
 package com.manyacov.avitoplayer.navigation
 
+import com.manyacov.common.NavPath
 import com.manyacov.resources.R
 
 sealed class NavItem {
@@ -17,9 +18,16 @@ sealed class NavItem {
             iconRes = R.drawable.ic_online
         )
 
-    object Song :
+    object LocalPlayer :
         BottomNavItem(
-            path = NavPath.SONG,
+            path = NavPath.LOCAL_PLAYER,
+            titleRes = R.string.track,
+            iconRes = 0
+        )
+
+    object ApiPlayer :
+        BottomNavItem(
+            path = NavPath.API_PLAYER,
             titleRes = R.string.track,
             iconRes = 0
         )

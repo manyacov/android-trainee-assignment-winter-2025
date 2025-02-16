@@ -14,15 +14,21 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.manyacov.common.Constants.SEARCH_DEBOUNCE_MILLS
 import com.manyacov.domain.avito_player.model.PlaylistTrack
+import com.manyacov.domain.avito_player.use_case.SaveCurrentTrackListUseCase
+import com.manyacov.domain.avito_player.use_case.SaveSessionUseCase
 import com.manyacov.domain.avito_player.use_case.SearchTrackFlowUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ApiPlaylistViewModel @Inject constructor(
-    private val searchTrackFlowUseCase: SearchTrackFlowUseCase
+    private val searchTrackFlowUseCase: SearchTrackFlowUseCase,
+    private val saveSessionUseCase: SaveSessionUseCase,
+    private val saveCurrentTrackListUseCase: SaveCurrentTrackListUseCase,
 ) : BaseViewModel<ApiPlaylistContract.Event, ApiPlaylistContract.State, ApiPlaylistContract.Effect>() {
 
     override fun createInitialState() = ApiPlaylistContract.State()
@@ -30,7 +36,7 @@ class ApiPlaylistViewModel @Inject constructor(
     private val searchText = MutableStateFlow("")
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val songs = searchText
+    private val songs = searchText
         .debounce(SEARCH_DEBOUNCE_MILLS.milliseconds)
         .flatMapLatest { searchText ->
             flow { emit(searchSongs(searchText).cachedIn(viewModelScope)) }
@@ -50,8 +56,13 @@ class ApiPlaylistViewModel @Inject constructor(
 
     override fun handleEvent(event: ApiPlaylistContract.Event) {
         when (event) {
-            is ApiPlaylistContract.Event.OnReloadClicked -> {} //TODO: change reload logic
             is ApiPlaylistContract.Event.UpdateSearchText -> searchText.value = event.searchText
+            is ApiPlaylistContract.Event.OnTrackClicked -> { savePath(event.trackId, event.tracksIds) }
         }
+    }
+
+    private fun savePath(trackId: String, tracksIds: List<Long>) = viewModelScope.launch(Dispatchers.IO) {
+        saveSessionUseCase.invoke(SaveSessionUseCase.Params(trackId))
+        saveCurrentTrackListUseCase.invoke(SaveCurrentTrackListUseCase.Params(tracksIds.map { it.toString() }))
     }
 }
